@@ -34,9 +34,7 @@ public class FXMLDocumentController implements Initializable {
     private Stage stage;
     private Scene scene;
     private Parent root;
-    
-    @FXML
-    GridPane grelha;
+
     @FXML
     Circle p1, p2;
 
@@ -57,7 +55,7 @@ public class FXMLDocumentController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
 
-        tab1 = new tabuleiro();
+      //  tab1 = new tabuleiro();
         jog1 = new jogador();
         jog2 = new jogador();
         p1.setFill(Color.BROWN);
@@ -83,7 +81,7 @@ public class FXMLDocumentController implements Initializable {
     public void addpeca(MouseEvent event) {
 
         System.out.println(p1.getFill());
-        grelha.add(new Circle(0, 0, 18, Color.BLUEVIOLET), 2, 3);
+        Circle B = new Circle(0, 0, 18, Color.BLUEVIOLET);
 
     }
 

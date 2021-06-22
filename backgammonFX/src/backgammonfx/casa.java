@@ -6,6 +6,8 @@
 package backgammonfx;
 
 import java.util.ArrayList;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  *
@@ -15,18 +17,37 @@ public class casa {
 
     ArrayList<peca> pecas;
     int id;
-    public casa(int id) {
+    int posX, posY;
+    Rectangle rect;
+
+    public casa(int id, int posX, int posY) {
         pecas = new ArrayList<peca>();
         this.id = id;
+        this.posX = posX;
+        this.posY = posY;
         
+        
+        rect = new Rectangle(40, 180);
+        
+        if (id <= 12) {
+            rect.setFill(Color.BLUE);
+        }
+        else {
+            rect.setFill(Color.ORANGE);
+        }
+        
+        rect.setStroke(Color.BLACK);
+        
+        
+
     }
 
     public void addpecabranca() {
-        pecas.add(new peca("jog1"));
+        pecas.add(new peca("jog1", posX, posY));
     }
 
     public void addpecapreta() {
-        pecas.add(new peca("jog2"));
+        pecas.add(new peca("jog2", posX, posY));
     }
 
     public void rempeca() {

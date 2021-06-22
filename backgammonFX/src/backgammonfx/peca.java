@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package backgammonfx;
-
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -13,15 +12,17 @@ import javafx.scene.shape.Circle;
  * @author User
  */
 public class peca {
-
+    
     String jogador;
     Circle c;
-
-    public peca(String jogador) {
-
-        c = new Circle(0, 0, 18, Color.CORAL);
-        this.jogador = jogador;
+    int posX, posY;
+    
+    public peca(String jogador, int posX, int posY) {
         
+        this.posX = posX;
+        this.posY = posY;
+        c = new Circle(posX, posY, 18, Color.CORAL);
+        this.jogador = jogador;
         
         if ("jog1".compareTo(jogador) == 0) {
             c.setFill(Color.WHITE);
@@ -29,9 +30,12 @@ public class peca {
         if ("jog2".compareTo(jogador) == 0) {
             c.setFill(Color.BLACK);
         }
-        c.setStroke(Color.BLACK);
         
-
+        c.setStroke(Color.BLACK);
     }
-
+    
+    public void draw() {
+        c.setTranslateX(posX);
+        c.setTranslateY(posX);
+    }
 }
