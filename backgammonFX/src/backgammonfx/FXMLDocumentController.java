@@ -83,7 +83,7 @@ public class FXMLDocumentController implements Initializable {
     public void addpeca(MouseEvent event) {
 
         System.out.println(p1.getFill());
-        grelha.add(new Circle(0, 0, 18, Color.BLUEVIOLET), 2, 1);
+        grelha.add(new Circle(0, 0, 18, Color.BLUEVIOLET), 2, 3);
 
     }
 
