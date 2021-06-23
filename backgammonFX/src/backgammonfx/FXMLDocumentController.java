@@ -8,6 +8,7 @@ package backgammonfx;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,6 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -34,19 +36,22 @@ public class FXMLDocumentController implements Initializable {
     private Scene scene;
     private Parent root;
 
-
     @FXML
     Pane pane;
+    @FXML
     Label ronda;
+    @FXML
+    Button rodardado;
     tabuleiro tab1;
     jogador jog1, jog2;
+    
 
     //  ArrayList<Circle> pecas;
     @FXML
     private void handleButtonAction(ActionEvent event) {
 
-        System.out.println("You clicked me!");
-        label.setText("Hello World!");
+        System.out.println("Dado 1:" + tab1.dado1.rodadado() + "\nDado 2:" + tab1.dado2.rodadado());
+        ronda.setText("Dado 1:" + tab1.dado1.rodadado() + "\nDado 2:" + tab1.dado2.rodadado()); ;
 
     }
 
@@ -71,11 +76,12 @@ public class FXMLDocumentController implements Initializable {
             }
         }
         //inicio do jogo
-        while (b == true) {
-        System.out.println("Roda do jogador 1");
-        ronda = new Label("ronda1");
+
+            System.out.println("Roda do jogador 1");
+            ronda.setText("Ronda1");
+            
+
         
-        }
 
     }
 
@@ -96,7 +102,6 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void addpeca(MouseEvent event) {
-
 
         Circle B = new Circle(0, 0, 18, Color.BLUEVIOLET);
 

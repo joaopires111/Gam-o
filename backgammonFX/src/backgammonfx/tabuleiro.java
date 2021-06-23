@@ -37,6 +37,8 @@ public class tabuleiro {
             }
         }
         iniciapecas();
+        
+        
 
     }
 
@@ -74,7 +76,9 @@ public class tabuleiro {
 
     public void jogada(String jogador, int casapart, int dado) {
         int chegada = casapart + dado;
+        
 
+        
         if (casas.get(chegada).pecas.isEmpty()) {
             casas.get(casapart).rempeca();
             if (jogador == "jog1") {

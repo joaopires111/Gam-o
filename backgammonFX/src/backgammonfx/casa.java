@@ -6,6 +6,7 @@
 package backgammonfx;
 
 import java.util.ArrayList;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -36,7 +37,12 @@ public class casa {
             rect.setFill(Color.ORANGE);
         }
 
-        rect.setStroke(Color.BLACK);
+        rect.setStroke(Color.WHITE);
+        
+        rect.setOnMousePressed(event -> pressed(event, id));
+        
+        
+        
 
     }
 
@@ -62,6 +68,11 @@ public class casa {
 
     public void rempeca() {
         pecas.remove(pecas.size() - 1);
+    }
+
+    private int pressed(MouseEvent event, int id) {
+        System.out.println(id);
+        return id;
     }
 
 }
