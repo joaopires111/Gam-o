@@ -1,40 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.URL?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.Pane?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="backgammonfx.FXMLDocumentController">
-    <stylesheets>
-        <URL value="@scene2.css" />
-    </stylesheets>
-   <children>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e58d1c" height="200.0" layoutX="354.0" layoutY="200.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e58d1c" height="200.0" layoutX="393.0" layoutY="200.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e58d1c" height="200.0" layoutX="432.0" layoutY="200.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffbe63" height="200.0" layoutX="220.0" layoutY="200.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#351fff" height="200.0" layoutX="177.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#351fff" height="200.0" layoutX="220.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#351fff" height="200.0" layoutX="6.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#351fff" height="200.0" layoutX="49.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e58d1c" height="200.0" layoutX="513.0" layoutY="200.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#351fff" height="200.0" layoutX="135.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#351fff" height="200.0" layoutX="90.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e58d1c" height="200.0" layoutX="473.0" layoutY="200.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffbe63" height="200.0" layoutX="177.0" layoutY="200.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffbe63" height="200.0" layoutX="90.0" layoutY="200.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffbe63" height="200.0" layoutX="49.0" layoutY="200.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle fx:id="cas6" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="200.0" layoutX="393.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle fx:id="cas5" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="200.0" layoutX="432.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle fx:id="cas4" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="200.0" layoutX="473.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle fx:id="cas3" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="200.0" layoutX="513.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle fx:id="cas2" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="200.0" layoutX="354.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffbe63" height="200.0" layoutX="6.0" layoutY="200.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffbe63" height="200.0" layoutX="135.0" layoutY="200.0" onMouseClicked="#switchscene1" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle fx:id="cas1" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="200.0" layoutX="554.0" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e58d1c" height="200.0" layoutX="554.0" layoutY="200.0" onMouseClicked="#addpeca" stroke="BLACK" strokeType="INSIDE" width="33.0" />
-      <Circle fx:id="p1" layoutX="300.0" layoutY="382.0" radius="18.0" stroke="BLACK" strokeType="INSIDE" />
-      <Circle fx:id="p2" fill="WHITE" layoutX="300.0" layoutY="18.0" radius="18.0" stroke="BLACK" strokeType="INSIDE" />
-   </children>
-</AnchorPane>
+
+<Pane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="backgammonfx.FXMLDocumentController" />

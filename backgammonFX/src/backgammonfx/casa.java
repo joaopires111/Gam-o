@@ -25,29 +25,39 @@ public class casa {
         this.id = id;
         this.posX = posX;
         this.posY = posY;
-        
-        
-        rect = new Rectangle(40, 180);
-        
-        if (id <= 12) {
+
+        rect = new Rectangle(50, 180);
+        rect.setLayoutX(posX);
+        rect.setLayoutY(posY);
+
+        if (id > 0 && id <= 12) {
             rect.setFill(Color.BLUE);
-        }
-        else {
+        } else if (id < 25) {
             rect.setFill(Color.ORANGE);
         }
-        
+
         rect.setStroke(Color.BLACK);
-        
-        
 
     }
 
     public void addpecabranca() {
-        pecas.add(new peca("jog1", posX, posY));
+
+        pecas.add(new peca("jog1", posX + 25, posY + correcaoposy()));
     }
 
     public void addpecapreta() {
-        pecas.add(new peca("jog2", posX, posY));
+        pecas.add(new peca("jog2", posX + 25, posY + correcaoposy()));
+    }
+
+    public int correcaoposy() {
+        int posycorr = pecas.size() * 10;
+        if (id > 12) {
+            posycorr *= -1;
+            posycorr += 160;
+        } else {
+            posycorr += 20;
+        }
+        return posycorr;
     }
 
     public void rempeca() {
