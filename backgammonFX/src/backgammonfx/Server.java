@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package backgammonServer;
-
+package backgammonfx;
+/**
+ *
+ * @author User
+ */
 import java.io.*;
 import java.net.*;
 
@@ -12,25 +15,43 @@ public class Server {
 
     ServerSocket ss;
     Socket s;
-    DataInputStream din;
-    DataOutputStream dout;
-    BufferedReader br;
-    public Server() {
-        try {
-            ss = new ServerSocket(6666);
-            s = ss.accept();//establishes connection   
-            din = new DataInputStream(s.getInputStream());
-            dout = new DataOutputStream(s.getOutputStream());
-            br = new BufferedReader(new InputStreamReader(System.in));
+    ObjectInputStream din;
+    ObjectOutputStream dout;
+    packet received;
+    static final int PORT = 3192;
 
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+    public Server() throws Exception {
+        
+
+        System.out.println("server up and running");
+        ss = new ServerSocket(PORT);
+        s = ss.accept();//establishes connection  
+
+        dout = new ObjectOutputStream(s.getOutputStream());
+        din = new ObjectInputStream(s.getInputStream());
+
+        received = (packet) din.readObject();
+        System.out.println(received.message);
+        
+        ss.close();
+
+    }
+    
+    public void servertab(tabuleiro h) throws IOException{
+                System.out.println("server up and running");
+        ss = new ServerSocket(PORT);
+        s = ss.accept();//establishes connection  
+
+        dout = new ObjectOutputStream(s.getOutputStream());
+        din = new ObjectInputStream(s.getInputStream());
+        
+            System.out.println(h.casas.get(5).id);
+        dout.writeObject(h.casas);
+        
+        System.out.println("server up and running");
+        ss.close();
+    
+    
     }
 
-    public void getinput() throws IOException {
-
-        int h = (int) din.readInt();
-        System.out.println("message= " + h);
-    }
 }

@@ -8,8 +8,6 @@ package backgammonfx;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -36,6 +34,7 @@ public class FXMLDocumentController implements Initializable {
     private Scene scene;
     private Parent root;
 
+
     @FXML
     Pane pane;
     Label ronda;
@@ -54,26 +53,15 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
-
+        // TODO
+        boolean b = true;
         tab1 = new tabuleiro();
         jog1 = new jogador();
         jog2 = new jogador();
-        
-                try {
-            // TODO
-            Server serve = new Server();
-            serve.servertab(tab1);
-            
-        } catch (Exception ex) {
-           System.out.println(ex);
-        }
-                
-                
-    //    Server server1 = new Server();
 
         for (int i = 0; i <= 25; i++) {
             pane.getChildren().add(tab1.casas.get(i).rect);
+            System.out.println("g");
         }
 
         //necessario repetir for para garantir que as peças estejam no topo da hierarquia
@@ -86,6 +74,7 @@ public class FXMLDocumentController implements Initializable {
 
         System.out.println("Roda do jogador 1");
         ronda = new Label("ronda1");
+
 
     }
 
@@ -106,6 +95,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void addpeca(MouseEvent event) {
+
 
         Circle B = new Circle(0, 0, 18, Color.BLUEVIOLET);
 

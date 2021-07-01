@@ -5,9 +5,7 @@
  */
 package backgammonfx;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -15,7 +13,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author User
  */
-public class casa  implements Serializable{
+public class casa {
 
     ArrayList<peca> pecas;
     int id;
@@ -39,8 +37,6 @@ public class casa  implements Serializable{
         }
 
         rect.setStroke(Color.BLACK);
-        
-        rect.setOnMousePressed(event -> pressed(event, id));
 
     }
 
@@ -66,10 +62,6 @@ public class casa  implements Serializable{
 
     public void rempeca() {
         pecas.remove(pecas.size() - 1);
-    }
-
-    private void pressed(MouseEvent event, int id) {
-        System.out.println(id);
     }
 
 }

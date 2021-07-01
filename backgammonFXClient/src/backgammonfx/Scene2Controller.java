@@ -5,6 +5,7 @@
  */
 package backgammonfx;
 
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -24,26 +25,26 @@ import javafx.event.ActionEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-
 /**
+ * FXML Controller class
  *
  * @author User
  */
-public class FXMLDocumentController implements Initializable {
-
-    private Label label;
+public class Scene2Controller implements Initializable {
+    
+        private Label label;
     private Stage stage;
     private Scene scene;
     private Parent root;
-
-    @FXML
+    
+        @FXML
     Pane pane;
     Label ronda;
     tabuleiro tab1;
     jogador jog1, jog2;
+    Client cliente;
 
-    //  ArrayList<Circle> pecas;
-    @FXML
+ @FXML
     private void handleButtonAction(ActionEvent event) {
 
         System.out.println("You clicked me!");
@@ -55,25 +56,29 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        boolean b = true;
 
-        tab1 = new tabuleiro();
         jog1 = new jogador();
         jog2 = new jogador();
-        
-                try {
-            // TODO
-            Server serve = new Server();
-            serve.servertab(tab1);
+         
+                    try {
+                // TODO
+               cliente = new Client();
+            } catch (Exception ex) {
+                         System.out.println(ex);
+            }
+                     
+            try {
+                tab1 = new tabuleiro(cliente.getcasas());
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
             
-        } catch (Exception ex) {
-           System.out.println(ex);
-        }
-                
-                
-    //    Server server1 = new Server();
-
+      //  Client client1 = new Client();
+        
         for (int i = 0; i <= 25; i++) {
             pane.getChildren().add(tab1.casas.get(i).rect);
+            System.out.println("g");
         }
 
         //necessario repetir for para garantir que as peças estejam no topo da hierarquia
@@ -86,6 +91,7 @@ public class FXMLDocumentController implements Initializable {
 
         System.out.println("Roda do jogador 1");
         ronda = new Label("ronda1");
+
 
     }
 
@@ -106,6 +112,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void addpeca(MouseEvent event) {
+
 
         Circle B = new Circle(0, 0, 18, Color.BLUEVIOLET);
 

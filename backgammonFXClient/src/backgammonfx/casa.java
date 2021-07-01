@@ -15,7 +15,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author User
  */
-public class casa  implements Serializable{
+public class casa implements Serializable {
 
     ArrayList<peca> pecas;
     int id;
@@ -33,15 +33,13 @@ public class casa  implements Serializable{
         rect.setLayoutY(posY);
 
         if (id > 0 && id <= 12) {
-            rect.setFill(Color.BLUE);
+            rect.setFill(Color.AQUA);
         } else if (id < 25) {
-            rect.setFill(Color.ORANGE);
+            rect.setFill(Color.CORAL);
         }
 
         rect.setStroke(Color.BLACK);
-        
-        rect.setOnMousePressed(event -> pressed(event, id));
-
+         rect.setOnMousePressed(event -> pressed(event, id));
     }
 
     public void addpecabranca() {
@@ -67,8 +65,7 @@ public class casa  implements Serializable{
     public void rempeca() {
         pecas.remove(pecas.size() - 1);
     }
-
-    private void pressed(MouseEvent event, int id) {
+        private void pressed(MouseEvent event, int id) {
         System.out.println(id);
     }
 
