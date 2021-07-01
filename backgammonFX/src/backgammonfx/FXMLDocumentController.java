@@ -71,11 +71,10 @@ public class FXMLDocumentController implements Initializable {
             }
         }
         //inicio do jogo
-        while (b == true) {
+
         System.out.println("Roda do jogador 1");
         ronda = new Label("ronda1");
-        
-        }
+
 
     }
 
