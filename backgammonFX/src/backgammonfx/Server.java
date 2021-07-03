@@ -4,54 +4,64 @@
  * and open the template in the editor.
  */
 package backgammonfx;
-/**
- *
- * @author User
- */
+
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Server {
 
-    ServerSocket ss;
     Socket s;
+    ServerSocket ss;
     ObjectInputStream din;
     ObjectOutputStream dout;
-    packet received;
+    packet p;
     static final int PORT = 3192;
 
     public Server() throws Exception {
-        
+        StartServer();
+        receber();
+    }
+    //-----------------------START SERVIDOR--------------------------
+    public void StartServer() throws ClassNotFoundException {
+        try {
 
-        System.out.println("server up and running");
-        ss = new ServerSocket(PORT);
-        s = ss.accept();//establishes connection  
+            ss = new ServerSocket(PORT);
+            s = ss.accept();//establishes connection  
 
-        dout = new ObjectOutputStream(s.getOutputStream());
-        din = new ObjectInputStream(s.getInputStream());
+            dout = new ObjectOutputStream(s.getOutputStream());
+            din = new ObjectInputStream(s.getInputStream());
+            System.out.println("server up and running");
 
-        received = (packet) din.readObject();
-        System.out.println(received.message);
-        
-        ss.close();
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
+    }
+    //-----------------------CLOSE SERVIDOR--------------------------
+    public void CloseServer() throws ClassNotFoundException {
+        try {
+            s.close();
+        } catch (IOException ex) {
+            System.out.println(ex);
+            
+        }
+    }
+
+    //---------------------------------RECEBER TESTE-----------------------------
+    public void receber() throws IOException, ClassNotFoundException {
+
+        System.out.println("A RECEBER");
+        p = (packet) din.readObject();
+        System.out.println("mensage recebida:" + p.message);
 
     }
-    
-    public void servertab(tabuleiro h) throws IOException{
-                System.out.println("server up and running");
-        ss = new ServerSocket(PORT);
-        s = ss.accept();//establishes connection  
+    //------------------------ENVIAR CASAS---------------------------------------
+    public void enviarPecas(tabuleiro tab1) throws IOException, ClassNotFoundException {
 
-        dout = new ObjectOutputStream(s.getOutputStream());
-        din = new ObjectInputStream(s.getInputStream());
-        
-            System.out.println(h.casas.get(5).id);
-        dout.writeObject(h.casas);
-        
-        System.out.println("server up and running");
-        ss.close();
-    
-    
+        System.out.println("A ENVIAR CASAS");
+        dout.writeObject(tab1.casas);
+        System.out.println("mensage enviada");
+
     }
 
 }

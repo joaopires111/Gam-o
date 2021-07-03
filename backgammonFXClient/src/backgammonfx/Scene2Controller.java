@@ -5,9 +5,14 @@
  */
 package backgammonfx;
 
-
+import static backgammonfx.Client.PORT;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,28 +28,35 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
+
 /**
- * FXML Controller class
  *
  * @author User
  */
 public class Scene2Controller implements Initializable {
-    
-        private Label label;
+
+    private Label label;
     private Stage stage;
     private Scene scene;
     private Parent root;
-    
-        @FXML
+
+    //---------------------------------FXML-----------------------------------------
+    @FXML
     Pane pane;
     Label ronda;
     tabuleiro tab1;
     jogador jog1, jog2;
+    peca pec;
+    packet p;
+    @FXML
+    ArrayList<Rectangle> Rects;
     Client cliente;
+    ArrayList<Circle> Circs;
 
- @FXML
+    //  ArrayList<Circle> pecas;
+    @FXML
     private void handleButtonAction(ActionEvent event) {
 
         System.out.println("You clicked me!");
@@ -56,43 +68,34 @@ public class Scene2Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        boolean b = true;
-
+        Rects = new ArrayList<>();
+        Circs = new ArrayList<>();
+        tab1 = new tabuleiro();
         jog1 = new jogador();
         jog2 = new jogador();
-         
-                    try {
-                // TODO
-               cliente = new Client();
-            } catch (Exception ex) {
-                         System.out.println(ex);
-            }
-                     
-            try {
-                tab1 = new tabuleiro(cliente.getcasas());
-            } catch (Exception ex) {
-                System.out.println(ex);
-            }
-            
-      //  Client client1 = new Client();
-        
-        for (int i = 0; i <= 25; i++) {
-            pane.getChildren().add(tab1.casas.get(i).rect);
-            System.out.println("g");
+        //---------------------------------server-----------------------------------------
+        try {
+            cliente = new Client();
+        } catch (Exception ex) {
+            System.out.println(ex);
         }
-
-        //necessario repetir for para garantir que as peças estejam no topo da hierarquia
-        for (int i = 0; i <= 25; i++) {
-            for (int h = 0; h < tab1.casas.get(i).pecas.size(); h++) {
-                pane.getChildren().add(tab1.casas.get(i).pecas.get(h).c);
-            }
+        try {
+            tab1.casas = cliente.receberpecas();
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex);
         }
-        //inicio do jogo
+        //--------------------------Criar retangulos------------------------------------
+        imprimeretangulos();
+//necessario repetir "for" para garantir que as peças estejam no topo da hierarquia
+        imprimepecas();
+//inicio do jogo
 
         System.out.println("Roda do jogador 1");
-        ronda = new Label("ronda1");
+        ronda = new Label("Ronda 1");
+        ronda.setLayoutX(300);
+        ronda.setLayoutY(180);       
 
-
+        //    Criar retangulos
     }
 
     public void switchscene1(MouseEvent event) throws IOException {
@@ -113,9 +116,61 @@ public class Scene2Controller implements Initializable {
 
     public void addpeca(MouseEvent event) {
 
-
         Circle B = new Circle(0, 0, 18, Color.BLUEVIOLET);
 
     }
 
+    @FXML
+    public void imprimeretangulos() {
+        Rects.clear();
+        for (int i = 0; i <= 25; i++) {
+
+            Rects.add(i, new Rectangle(50, 180));
+            Rects.get(i).setLayoutX(tab1.casas.get(i).posX);
+            Rects.get(i).setLayoutY(tab1.casas.get(i).posY);
+            if ("AQUA".compareTo(tab1.casas.get(i).cor) == 0) {
+                Rects.get(i).setFill(Color.BLUEVIOLET);
+            }
+            if ("CHOCOLATE".compareTo(tab1.casas.get(i).cor) == 0) {
+                Rects.get(i).setFill(Color.TOMATO);
+            }
+
+            Rects.get(i).setStroke(Color.BLACK);
+            Rects.get(i).setId(String.valueOf(i));
+            System.out.println(Rects.get(i));
+            Rects.get(i).setOnMousePressed(event -> pressed(event));
+            pane.getChildren().add(Rects.get(i));
+
+        }
+    }
+
+    @FXML
+    public void imprimepecas() {
+        Circs.clear();
+        int cont = 0;
+        for (int i = 0; i <= 25; i++) {
+            for (int h = 0; h < tab1.casas.get(i).pecas.size(); h++) {
+
+                Circs.add(cont, new Circle(tab1.casas.get(i).pecas.get(h).posX, tab1.casas.get(i).pecas.get(h).posY, 18));
+
+                if ("jog1".compareTo(tab1.casas.get(i).pecas.get(h).jogador) == 0) {
+                    Circs.get(cont).setFill(Color.WHITE);
+                    Circs.get(cont).setStroke(Color.BLACK);
+                }
+                if ("jog2".compareTo(tab1.casas.get(i).pecas.get(h).jogador) == 0) {
+                    Circs.get(cont).setFill(Color.BLACK);
+                    Circs.get(cont).setStroke(Color.WHITE);
+                }
+                pane.getChildren().add(Circs.get(cont));
+                cont++;
+            }
+        }
+    }
+
+    private void pressed(MouseEvent event) {
+        Rectangle b = (Rectangle) event.getSource();
+        int id = Integer.parseInt(b.getId());
+        System.out.println(id);
+        tab1.casas.get(id);
+    }
 }

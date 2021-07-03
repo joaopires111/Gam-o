@@ -11,50 +11,56 @@ import java.util.ArrayList;
 
 public class Client {
 
-    static ArrayList<casa> casas;  
     Socket s;
     ObjectInputStream din;
     ObjectOutputStream dout;
-    packet received;
+    packet p;
+
+    ArrayList<casa> casas;
     static final int PORT = 3192;
 
     public Client() throws Exception {
+        StartServer();
+        enviar();
+    }
+    //-----------------------START SERVIDOR--------------------------
+    public void StartServer() throws ClassNotFoundException {
+        try {
 
-        System.out.println("client up and running");
+            s = new Socket("localhost", PORT);
+            dout = new ObjectOutputStream(s.getOutputStream());
+            din = new ObjectInputStream(s.getInputStream());
+            System.out.println("CLIENT up and running");
 
-        s = new Socket("localhost", PORT);
-
-        System.out.println("client up and running");
-
-        dout = new ObjectOutputStream(s.getOutputStream());
-        din = new ObjectInputStream(s.getInputStream());
-
-        packet sent = new packet("okokokokokokokok");
-        dout.writeObject(sent);
-
-        System.out.println("client up and running");
-        dout.close();
-        s.close();
-
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
+    }
+    //-----------------------CLOSE SERVIDOR--------------------------
+    public void CloseServer() throws ClassNotFoundException {
+        try {
+            s.close();
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
     }
 
-    public ArrayList<casa> getcasas() throws Exception {
-        System.out.println("client up and running");
+    //-------------------------ENVIAR TESTE-------------------------------------
+    public void enviar() throws IOException, ClassNotFoundException {
 
-        s = new Socket("localhost", PORT);
+        System.out.println("A ENVIAR");
+        p = new packet("A bueno ADIOS MASTER :c");
+        dout.writeObject(p);
+        System.out.println("mensage enviada");
 
-        System.out.println("client up and running");
+    }
+    //-------------------------RECEBER CASAS-------------------------------------
+    public ArrayList<casa> receberpecas() throws IOException, ClassNotFoundException {
 
-        dout = new ObjectOutputStream(s.getOutputStream());
-        din = new ObjectInputStream(s.getInputStream());
 
+        System.out.println("A RECEBER casas");
         casas = (ArrayList<casa>) din.readObject();
-       if (casas == null){System.out.println("NAO DEU");}
-        System.out.println(casas.get(1).id);
-         dout.close();
-        s.close();       
+        System.out.println("mensage recebida:");
         return casas;
-
-
     }
 }

@@ -6,6 +6,7 @@
 package backgammonfx;
 
 import java.util.ArrayList;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -18,24 +19,26 @@ public class tabuleiro {
     dado dado2;
 
     public tabuleiro() {
-        casas = new ArrayList<casa>();
+        casas = new ArrayList<>();
         dado1 = new dado();
         dado2 = new dado();
         for (int i = 0; i <= 25; i++) {
             if (i <= 6) {
-                casas.add(new casa(i, 650 - (i * 50), 0));
+                casas.add(new casa(i, 650 - (i * 50), 0, "AQUA"));
                 System.out.println(i);
             } else if (i > 6 && i <= 12) {
-                casas.add(new casa(i, 650 - (i * 50) - 50, 0));
+                casas.add(new casa(i, 650 - (i * 50) - 50, 0, "AQUA"));
                 System.out.println(i);
             } else if (i > 12 && i <= 18) {
-                casas.add(new casa(i, (i - 13) * 50, 220));
+                casas.add(new casa(i, (i - 13) * 50, 220, "CHOCOLATE"));
                 System.out.println(i);
             } else if (i > 18) {
-                casas.add(new casa(i, ((i - 13) * 50) + 50, 220));
+                casas.add(new casa(i, ((i - 13) * 50) + 50, 220, "CHOCOLATE"));
                 System.out.println(i);
             }
+
         }
+
         iniciapecas();
 
     }
