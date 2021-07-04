@@ -55,12 +55,12 @@ public class FXMLDocumentController implements Initializable {
     packet p;
     ArrayList<Rectangle> Rects;
     @FXML
-    ArrayList<Circle> Circs;
+   static Circle[][] Circs;
     Server servidor;
     casa casacopy;
     TranslateTransition moves; 
-    int iniX, iniY, finX, finY, iniID, finID, phase;
-
+    int finX, finY, finID, finH, phase;
+    int iniX, iniY, iniID, iniH;
     //  ArrayList<Circle> pecas;
     @FXML
     private void handleButtonAction(ActionEvent event) {
@@ -73,9 +73,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        Circs = new Circle[25][5];
         Rects = new ArrayList<>();
-        Circs = new ArrayList<>();
         tab1 = new tabuleiro();
         jog1 = new jogador();
         jog2 = new jogador();
@@ -94,8 +93,9 @@ public class FXMLDocumentController implements Initializable {
         } catch (Exception ex) {
             System.out.println(ex);
         }
-        phase = 1;
+
         //--------------------------IMPRIMIR------------------------------------
+                phase = 1;
         imprimeretangulos();
         imprimepecas();        
         System.out.println("Roda do jogador 1");
@@ -162,24 +162,21 @@ public class FXMLDocumentController implements Initializable {
 //necessario repetir "for" para garantir que as peças estejam no topo da hierarquia
     @FXML
     public void imprimepecas() {
-        Circs.clear();
-        int cont = 0;
         for (int i = 0; i <= 25; i++) {
             for (int h = 0; h < tab1.casas.get(i).pecas.size(); h++) {
 
-                Circs.add(cont, new Circle(tab1.casas.get(i).pecas.get(h).posX, tab1.casas.get(i).pecas.get(h).posY, 18));
+                Circs[i][h] = new Circle(tab1.casas.get(i).pecas.get(h).posX, tab1.casas.get(i).pecas.get(h).posY, 18);
 
                 if ("jog1".compareTo(tab1.casas.get(i).pecas.get(h).jogador) == 0) {
-                    Circs.get(cont).setFill(Color.WHITE);
-                    Circs.get(cont).setStroke(Color.BLACK);
+                    Circs[i][h].setFill(Color.WHITE);
+                    Circs[i][h].setStroke(Color.BLACK);
                 }
                 if ("jog2".compareTo(tab1.casas.get(i).pecas.get(h).jogador) == 0) {
-                    Circs.get(cont).setFill(Color.BLACK);
-                    Circs.get(cont).setStroke(Color.WHITE);
+                    Circs[i][h].setFill(Color.BLACK);
+                    Circs[i][h].setStroke(Color.WHITE);
                 }
-                Circs.get(cont).setId(i+""+h);
-                pane.getChildren().add(Circs.get(cont));
-                cont++;
+                Circs[i][h].setId(i+""+h);
+                pane.getChildren().add(Circs[i][h]);
             }
         }
     }
@@ -188,11 +185,13 @@ public class FXMLDocumentController implements Initializable {
         if(phase == 1){
         Rectangle b = (Rectangle) event.getSource();
         iniID = Integer.parseInt(b.getId());
-        iniX = tab1.casas.get(iniID).posX;
-        iniY = tab1.casas.get(iniID).posY;
+        iniH = tab1.casas.get(iniID).pecas.size()-1;
+        iniX = tab1.casas.get(iniID).pecas.get(iniH).posX;
+        iniY = tab1.casas.get(iniID).pecas.get(iniH).posY;
         System.out.println("ID inicial:" + iniID);
         System.out.println("X inicial:" + iniX);
         System.out.println("Y inicial:" + iniY);
+        System.out.println("H inicial:" + iniH);        
         Rects.get(iniID).setFill(Color.RED);
         phase = 2;
         ronda.setText("fase do jogo: "+phase);   
@@ -200,16 +199,19 @@ public class FXMLDocumentController implements Initializable {
         else if(phase == 2){
         Rectangle b = (Rectangle) event.getSource();
         finID = Integer.parseInt(b.getId());
-        finX = tab1.casas.get(finID).posX;
-        finY = tab1.casas.get(finID).posY;
+        finH = tab1.casas.get(finID).pecas.size()-1;      
+        finX = tab1.casas.get(finID).pecas.get(finH).posX;
+        finY = tab1.casas.get(finID).pecas.get(finH).posY;
         System.out.println("ID inicial:" + finID);
         System.out.println("X inicial:" + finX);
         System.out.println("Y inicial:" + finY);
+        System.out.println("H inicial:" + finH);          
         Rects.get(finID).setFill(Color.BLUE);
         phase = 3;
         ronda.setText("fase do jogo: "+phase);
         
         movepeca(finX - iniX, finY - iniY);
+        phase = 1;
         }
     }
     
@@ -220,14 +222,16 @@ public class FXMLDocumentController implements Initializable {
         translate.setByX(diferencaX);
         translate.setByY(diferencaY);        
         //setting the duration for the Translate transition   
-        translate.setDuration(Duration.millis(500));
+        translate.setDuration(Duration.millis(2000));
         //setting cycle count for the Translate transition   
         translate.setCycleCount(1);
         //the transition will set to be auto reversed by setting this to true   
         translate.setAutoReverse(true);  
         //setting Circle as the node onto which the transition will be applied  
-        translate.setNode(Circs.get(3));
+        translate.setNode(Circs[iniID][iniH]);
         //playing the transition   
         translate.play();
+        
+                System.out.println("ANIMACAO ACABOU");    
     }
 }
