@@ -31,13 +31,11 @@ public class casa implements Serializable {
     }
 
     public void addpecabranca() {
-
         pecas.add(new peca("jog1", posX + 25, posY + correcaoposy()));
     }
-
     public void addpecapreta() {
         pecas.add(new peca("jog2", posX + 25, posY + correcaoposy()));
-    }
+    }   
 
     public void addpecablank() {
 

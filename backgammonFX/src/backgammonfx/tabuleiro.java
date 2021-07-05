@@ -111,6 +111,7 @@ public class tabuleiro {
                     //se as peças pertencem ao jogador 1
                     if (casas.get(i).pecas.get(0).jogador.compareTo(jogador) == 0) {
                         total += casas.get(i).pecas.size();
+                                System.out.println("TOTAL " + total);
                     }
                 }
             }
@@ -123,12 +124,13 @@ public class tabuleiro {
                     //se as peças pertencem ao jogador 2
                     if (casas.get(i).pecas.get(0).jogador.compareTo(jogador) == 0) {
                         total += casas.get(i).pecas.size();
+                                System.out.println("TOTAL " + total);
                     }
                 }
             }
         }
-        System.out.println("TOTAL " + total);
-        return total <= 15;
+
+        return total >= 15;
     }
 
 

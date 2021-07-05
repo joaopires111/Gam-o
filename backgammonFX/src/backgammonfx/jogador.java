@@ -14,14 +14,16 @@ import java.util.ArrayList;
 public class jogador {
 
     ArrayList<peca> pecas;
-    int posX =  300;
-    int posY =  100;
+    int posX;
+    int posY;
     int id;
     String jogador;
-    public jogador(int id, String jogador) {
+    public jogador(int id, String jogador, int posX, int posY) {
         pecas = new ArrayList<>();
         this.id = id;
         this.jogador = jogador;
+        this.posX = posX;
+        this.posY = posY;
     }  
         public void addpecabranca() {
 
@@ -47,8 +49,7 @@ public class jogador {
         }
         return posycorr;
     }
-
-    public void rempeca() {
+        public void rempeca() {
         pecas.remove(pecas.size() - 1);
     }
 }

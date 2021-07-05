@@ -72,8 +72,7 @@ public class Scene2Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         tab1 = new tabuleiro();
-        jog = new jogador(0, jogador);
-        adv = new jogador(25, adversario);
+
         phase = 0;
         fimjogo = false;
 

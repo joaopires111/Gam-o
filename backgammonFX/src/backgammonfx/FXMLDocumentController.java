@@ -49,7 +49,7 @@ public class FXMLDocumentController implements Initializable {
     Pane pane;
     @FXML
     Button cancelar;
-    Label ronda;
+    Label ronda, labelfim;
     Button bdados;
     tabuleiro tab1;
     jogador jog, adv;
@@ -70,9 +70,13 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         tab1 = new tabuleiro();
-        jog = new jogador(0, jogador);
-        adv = new jogador(25, adversario);
+        jog = new jogador(26, jogador, 655, 220);
+        adv = new jogador(27, adversario, 655, 0);
+        labelfim = new Label("is" + fimjogo);
+        labelfim.setLayoutX(600);
+        labelfim.setLayoutY(180);
         fimjogo = false;
+
         phase = 0;
 
         //---------------------------------server-----------------------------------------
@@ -97,7 +101,7 @@ public class FXMLDocumentController implements Initializable {
         if (phase == 2) {
             Rectangle b = (Rectangle) event.getSource();
             iniID = Integer.parseInt(b.getId());
-            if (tab1.casas.get(iniID).jogavel && Rects.get(iniID).isDisable() == false) {
+            if (tab1.casas.get(iniID).jogavel) {
                 click1();
             }
 
@@ -105,7 +109,7 @@ public class FXMLDocumentController implements Initializable {
             Rectangle b = (Rectangle) event.getSource();
             finID = Integer.parseInt(b.getId());
 
-            if ((finID != 25 && finID != 0) || fimjogo) {
+            if ((finID < 25 && finID != 0) || fimjogo) {
                 click2();
             }
         }
@@ -159,6 +163,8 @@ public class FXMLDocumentController implements Initializable {
     private void imprime() {
         imprimeretangulos();
         imprimepecas();
+        labelfim.setText("Fase final:"+ fimjogo);
+        pane.getChildren().add(labelfim);
 
     }
 
@@ -169,6 +175,28 @@ public class FXMLDocumentController implements Initializable {
         dado2.setLayoutY(200);
         pane.getChildren().add(dado1);
 
+    }
+//Imprime os retangulos de ambos os jogadores
+
+    public void imprimeretangulosjog(int i, jogador jog) {
+
+        Rects.add(i, new Rectangle(50, 180));
+        Rects.get(i).setLayoutX(jog.posX);
+        Rects.get(i).setLayoutY(jog.posY);
+
+        if ("jog1".equals(jog.jogador)) {
+            Rects.get(i).setFill(Color.BLACK);
+            Rects.get(i).setStroke(Color.GOLD);
+            Rects.get(i).setStrokeWidth(3);
+        }
+        if ("jog2".equals(jog.jogador)) {
+            Rects.get(i).setFill(Color.RED);
+            Rects.get(i).setStroke(Color.GOLD);
+            Rects.get(i).setStrokeWidth(3);
+        }
+        Rects.get(i).setId(String.valueOf(i));
+
+        Rects.get(i).setOnMousePressed(event -> pressed(event));
     }
 
     public void imprimeretangulos() {
@@ -192,19 +220,12 @@ public class FXMLDocumentController implements Initializable {
             if ("".equals(tab1.casas.get(i).cor)) {
                 Rects.get(i).setOpacity(0.10);
             }
-            /*       if (tab1.casas.get(i).clicavel() && phase == 2) {
-                Rects.get(i).setFill(Color.DIMGRAY);
-                Rects.get(i).setDisable(true);
-                
-            }*/
-
             Rects.get(i).setId(String.valueOf(i));
-            //Rects.get(i).setDisable(false);
 
             Rects.get(i).setOnMousePressed(event -> pressed(event));
-
         }
-
+        imprimeretangulosjog(jog.id, jog);
+        imprimeretangulosjog(adv.id, adv);
         pane.getChildren().addAll(Rects);
         System.out.println("rectangulos imprimidos");
     }
@@ -212,7 +233,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     public void imprimepecas() {
-        Circs = new Circle[26][16];
+        Circs = new Circle[30][16];
         pane.getChildren().removeIf(node -> node instanceof Circle);
         for (int i = 0; i <= 25; i++) {
             for (int h = 0; h < tab1.casas.get(i).pecas.size(); h++) {
@@ -233,6 +254,8 @@ public class FXMLDocumentController implements Initializable {
 
                 pane.getChildren().add(Circs[i][h]);
             }
+
+            //IMPRIMIR CIRCULOS DE CADA JOGADOR 
         }
 
     }
@@ -242,6 +265,7 @@ public class FXMLDocumentController implements Initializable {
         ronda.setLayoutX(300);
         ronda.setLayoutY(180);
         pane.getChildren().add(ronda);
+
     }
 
     public void imprimebotao() {
@@ -273,18 +297,24 @@ public class FXMLDocumentController implements Initializable {
     //--------------------------------------------JOGADAS-----------------------------------------------
     //verifica se posicao de destino encontra se vazia e caso nao esteja vazia se contem peças do oponente
     private boolean clicavel(int posID) {
-        if (!tab1.casas.get(posID).pecas.isEmpty()) {
-            if (jogador.compareTo(tab1.casas.get(posID).pecas.get(0).jogador) == 0) {
-                return true;
-            } else if (tab1.casas.get(posID).pecas.size() == 1) {
-                System.out.println("SIZE :" + tab1.casas.get(posID).pecas.size());
-                return true;
+        try {
+            if (!tab1.casas.get(posID).pecas.isEmpty()) {
+                if (jogador.compareTo(tab1.casas.get(posID).pecas.get(0).jogador) == 0) {
+                    return true;
+                } else if (tab1.casas.get(posID).pecas.size() == 1) {
+                    System.out.println("SIZE :" + tab1.casas.get(posID).pecas.size());
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
-                return false;
+                return true;
             }
-        } else {
-            return true;
+        } catch (Exception ex) {
+            System.out.println(ex);
+            return false;
         }
+
     }
 
     private void click1() {
@@ -324,35 +354,100 @@ public class FXMLDocumentController implements Initializable {
         //correção automatica de foreach feita pelo netbeans (functional operation ?)
         Rects.forEach((f) -> {
             f.setDisable(true);
-            
-        });
 
+        });
+        //desbloqueio da ultima posicao
         Rects.get(iniID).setFill(Color.RED);
+        if (fimjogo && (posID1 >= 25 || posID2 >= 25)) {
+            Rects.get(jog.id).setDisable(false);
+            Rects.get(jog.id).setFill(Color.DARKSEAGREEN);
+            System.out.println("weweweeeeeeeeeeeeeeeeee");
+            System.out.println("weweweeeeeeeeeeeeeeeeee");
+        }
+
         if (tab1.dado1.uso == false && clicavel(posID1)) {
             Rects.get(posID1).setFill(Color.DARKSEAGREEN);
             Rects.get(posID1).setDisable(false);
+
         }
         if (tab1.dado2.uso == false && clicavel(posID2)) {
             Rects.get(posID2).setFill(Color.DARKSEAGREEN);
             Rects.get(posID2).setDisable(false);
+            //desbloqueio da ultima posicao            
+
         }
+
     }
 
     private void click2() {
         System.out.print(finID);
+
+        if (finID == 0 || finID == 25) {
+            //nao é aceite            
+            System.out.println("wowoooooooooooooooooooo");
+
+        } else if (finID == 26 || finID == 27) {
+            if (finID == jog.id) {
+                clickfimjogo();
+                System.out.println("Fim dde jogo confirmado");
+                ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
+                movepeca(finX - iniX, finY - iniY);
+            }
+        } else {
+            clicknormal();
+            ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
+            movepeca(finX - iniX, finY - iniY);
+        }
+
+        /*  for (Rectangle f : Rects) {
+                f.setDisable(true);
+            }*/
+    }
+
+    public void clickfimjogo() {
         //Adicionar peça para acertar a posição da animação final    
+        jog.addpecablank();
+        //verificar o  H (id da ultima peça dentro da casa)
+        finH = jog.pecas.size() - 1;
+        finX = jog.pecas.get(finH).posX;
+        finY = jog.pecas.get(finH).posY;
+        //Remove peça blank
+        jog.rempeca();
+        if ("jog1".compareTo(jogador) == 0) {
+            jog.addpecabranca();
+        }
+        if ("jog2".compareTo(jogador) == 0) {
+            jog.addpecapreta();
+        }
+        //Remove peça do inicio
+        tab1.casas.get(iniID).rempeca();
+        Rects.get(finID).setFill(Color.BLUE);
+        //verificar que dado escolheu (a segunda condição é para caso os dois dados sejam iguais)
+        if (finID == posID1 && tab1.dado1.uso == false) {
+            tab1.dado1.uso = true;
+            phase = 2;
+        } else if (finID == posID2) {
+            tab1.dado2.uso = true;
+            phase = 2;
+        }
+        if (tab1.dado1.uso && tab1.dado2.uso) {
+            phase = 4;
+        }
 
+        condicaovitoria(jog.jogador, jog.id);
+
+    }
+
+    public void clicknormal() {
+        //Adicionar peça para acertar a posição da animação final    
         tab1.casas.get(finID).addpecablank();
-
         //verificar o  H (id da ultima peça dentro da casa)
         finH = tab1.casas.get(finID).pecas.size() - 1;
         finX = tab1.casas.get(finID).pecas.get(finH).posX;
         finY = tab1.casas.get(finID).pecas.get(finH).posY;
         //Remove peça blank
         tab1.casas.get(finID).rempeca();
-
         comivel();
-
         if ("jog1".compareTo(jogador) == 0) {
             tab1.casas.get(finID).addpecabranca();
 
@@ -366,8 +461,7 @@ public class FXMLDocumentController implements Initializable {
         //Remove peça do inicio
         tab1.casas.get(iniID).rempeca();
         Rects.get(finID).setFill(Color.BLUE);
-
-        //verificar que dado escolheu
+        //verificar que dado escolheu (a segunda condição é para caso os dois dados sejam iguais)
         if (finID == posID1 && tab1.dado1.uso == false) {
             tab1.dado1.uso = true;
             phase = 2;
@@ -375,24 +469,10 @@ public class FXMLDocumentController implements Initializable {
             tab1.dado2.uso = true;
             phase = 2;
         }
+
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
-
         }
-
-    
-        if (finID == 25) {
-            condicaovitoria("jog1", 25);
-        } else if (finID == 0) {
-            condicaovitoria("jog2", 0);
-        } else {
-
-            ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
-            movepeca(finX - iniX, finY - iniY);
-        }
-        /*  for (Rectangle f : Rects) {
-                f.setDisable(true);
-            }*/
     }
 
     private void cancelarjog() {
@@ -467,11 +547,11 @@ public class FXMLDocumentController implements Initializable {
             ronda.setRotate(0.1);
             ronda.setText(jog + "GANHOU !!!!");
             animavitoria();
-                    Rects.forEach((f) -> {
-            f.setDisable(true);
-            System.out.print(f.getId());
+            Rects.forEach((f) -> {
+                f.setDisable(true);
+                System.out.print(f.getId());
 
-        });
+            });
 
         }
 
