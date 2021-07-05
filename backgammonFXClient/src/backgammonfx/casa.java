@@ -5,7 +5,6 @@
  */
 package backgammonfx;
 
-import backgammonfx.peca;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -14,11 +13,13 @@ import java.util.ArrayList;
  * @author User
  */
 public class casa implements Serializable {
-
+    
     ArrayList<peca> pecas;
     final int id;
     int posX, posY;
     String cor;
+    //representa se é possivel mover peça
+    boolean jogavel;
 
     public casa(int id, int posX, int posY, String cor) {
         pecas = new ArrayList<>();
@@ -26,6 +27,8 @@ public class casa implements Serializable {
         this.posX = posX;
         this.posY = posY;
         this.cor = cor;
+        jogavel = true;
+        
 
     }
 
@@ -36,6 +39,10 @@ public class casa implements Serializable {
 
     public void addpecapreta() {
         pecas.add(new peca("jog2", posX + 25, posY + correcaoposy()));
+    }
+    public void addpecablank() {
+
+    pecas.add(new peca("", posX + 25, posY + correcaoposy()));
     }
 
     public int correcaoposy() {
@@ -52,5 +59,18 @@ public class casa implements Serializable {
     public void rempeca() {
         pecas.remove(pecas.size() - 1);
     }
+    public boolean vazio() {
+        return pecas.isEmpty();
+    }
+    
+    public void setjogavel(String jogador, boolean jogavel) {
+        if (jogador == "jog1") {
+            this.jogavel = jogavel;
 
+        }
+        else if (jogador == "jog2") {
+            this.jogavel = !jogavel;
+        }
+
+    }
 }

@@ -6,7 +6,6 @@
 package backgammonfx;
 
 import java.util.ArrayList;
-import javafx.scene.paint.Color;
 
 /**
  *
@@ -24,17 +23,4 @@ public class tabuleiro {
         dado2 = new dado();
     }
 
-    public void jogada(String jogador, int casapart, int dado) {
-        int chegada = casapart + dado;
-
-        if (casas.get(chegada).pecas.isEmpty()) {
-            casas.get(casapart).rempeca();
-            if (jogador == "jog1") {
-                casas.get(chegada).addpecabranca();
-            } else if (jogador == "jog2") {
-                casas.get(chegada).addpecapreta();
-            }
-        }
-
-    }
 }

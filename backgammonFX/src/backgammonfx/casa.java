@@ -18,6 +18,7 @@ public class casa implements Serializable {
     final int id;
     int posX, posY;
     String cor;
+    boolean jogavel;
 
     public casa(int id, int posX, int posY, String cor) {
         pecas = new ArrayList<>();
@@ -25,6 +26,7 @@ public class casa implements Serializable {
         this.posX = posX;
         this.posY = posY;
         this.cor = cor;
+        jogavel = true;
 
     }
 
@@ -35,6 +37,11 @@ public class casa implements Serializable {
 
     public void addpecapreta() {
         pecas.add(new peca("jog2", posX + 25, posY + correcaoposy()));
+    }
+
+    public void addpecablank() {
+
+        pecas.add(new peca("", posX + 25, posY + correcaoposy()));
     }
 
     public int correcaoposy() {
@@ -52,4 +59,19 @@ public class casa implements Serializable {
         pecas.remove(pecas.size() - 1);
     }
 
+    public boolean vazio() {
+        return pecas.isEmpty();
+    }
+
+    public void setjogavel(String jogador, boolean jogavel) {
+        if (jogador == "jog1") {
+            this.jogavel = jogavel;
+
+        }
+        if (jogador == "jog2") {
+            this.jogavel = !jogavel;
+
+        }
+
+    }
 }

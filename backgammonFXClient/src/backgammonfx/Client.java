@@ -63,4 +63,12 @@ public class Client {
         System.out.println("mensage recebida:");
         return casas;
     }
+        //------------------------ENVIAR CASAS---------------------------------------
+    public void enviarPecas(tabuleiro tab1) throws IOException, ClassNotFoundException {
+
+        System.out.println("A ENVIAR CASAS");
+        dout.writeObject(tab1.casas);
+        System.out.println("mensage enviada");
+
+    }
 }

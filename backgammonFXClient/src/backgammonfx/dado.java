@@ -11,15 +11,16 @@ package backgammonfx;
  */
 public class dado {
     int face;
-    
+    boolean uso;
     public dado(){
+    uso = false;
     face = 1;
     }
     
     public int rodadado(){
     face = (int) Math.floor(Math.random() * 6) + 1;
-        return face;
-    
+    return face;
     }
+    
     
 }

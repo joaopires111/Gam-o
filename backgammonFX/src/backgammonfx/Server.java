@@ -17,7 +17,7 @@ public class Server {
     ObjectOutputStream dout;
     packet p;
     static final int PORT = 3192;
-
+    ArrayList<casa> casas;
     public Server() throws Exception {
         StartServer();
         receber();
@@ -62,6 +62,15 @@ public class Server {
         dout.writeObject(tab1.casas);
         System.out.println("mensage enviada");
 
+    }
+        //-------------------------RECEBER CASAS-------------------------------------
+    public ArrayList<casa> receberpecas() throws IOException, ClassNotFoundException {
+
+
+        System.out.println("A RECEBER casas");
+        casas = (ArrayList<casa>) din.readObject();
+        System.out.println("mensage recebida:");
+        return casas;
     }
 
 }
