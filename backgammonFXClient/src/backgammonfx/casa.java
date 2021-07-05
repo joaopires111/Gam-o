@@ -64,11 +64,11 @@ public class casa implements Serializable {
     }
     
     public void setjogavel(String jogador, boolean jogavel) {
-        if (jogador == "jog1") {
+        if ("jog1".equals(jogador)) {
             this.jogavel = jogavel;
 
         }
-        else if (jogador == "jog2") {
+        else if ("jog2".equals(jogador)) {
             this.jogavel = !jogavel;
         }
 
