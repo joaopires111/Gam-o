@@ -75,6 +75,7 @@ public class Scene2Controller implements Initializable {
         jog = new jogador(0, jogador);
         adv = new jogador(25, adversario);
         phase = 0;
+        fimjogo = false;
 
         //---------------------------------server-----------------------------------------
         try {
@@ -98,7 +99,7 @@ public class Scene2Controller implements Initializable {
 
     }
 
-    private void pressed(MouseEvent event) {
+private void pressed(MouseEvent event) {
         if (phase == 2) {
             Rectangle b = (Rectangle) event.getSource();
             iniID = Integer.parseInt(b.getId());
@@ -109,9 +110,9 @@ public class Scene2Controller implements Initializable {
         } else if (phase == 3) {
             Rectangle b = (Rectangle) event.getSource();
             finID = Integer.parseInt(b.getId());
-            if (Rects.get(finID).isDisable() == false) {
+            
+            if ((finID != 25 && finID != 0) || fimjogo) {
                 click2();
-                System.out.println("cringe");
             }
         }
     }
@@ -136,7 +137,8 @@ public class Scene2Controller implements Initializable {
 
         System.out.println("ANIMACAO ACABOU");
     }
-      private void animadados() {
+
+    private void animadados() {
         //Instantiating TranslateTransition class   
         TranslateTransition translate = new TranslateTransition();
         //shifting the X coordinate of the centre of the circle by 400   
@@ -157,7 +159,6 @@ public class Scene2Controller implements Initializable {
 
         System.out.println("ANIMACAO ACABOU");
     }
-    
 
     //----------------------------IMPRIME----------------------------------------
     private void imprime() {
@@ -256,7 +257,10 @@ public class Scene2Controller implements Initializable {
         tab1.dado2.rodadado();
         phase = 2;
         ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
-        bdados.setDisable(true);
+        bdados.setText("Passar Jogada");
+        bdados.setDisable(false);
+        bdados.setOnMouseClicked(event1 -> passarjogada());
+
     }
 
     //--------------------------------------------JOGADAS-----------------------------------------------
@@ -346,6 +350,8 @@ public class Scene2Controller implements Initializable {
         if ("jog2".compareTo(jogador) == 0) {
             tab1.casas.get(finID).addpecapreta();
         }
+        //verifica se o jogo se encontra na fase final
+        fimjogo = tab1.fimdejogo(jogador);
 
         //Remove peça do inicio
         tab1.casas.get(iniID).rempeca();
@@ -382,7 +388,8 @@ public class Scene2Controller implements Initializable {
             ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
         }
     }
-        //---------------------------------server-----------------------------------------
+    //---------------------------------server-----------------------------------------
+
     private void passarjogada() {
         bdados.setDisable(true);
         try {
@@ -416,7 +423,8 @@ public class Scene2Controller implements Initializable {
         ronda.setText("jogada recebida \n ronda:" + phase);
 
     }
-        //---------------------------------server-----------------------------------------
+    //---------------------------------server-----------------------------------------
+
     private void comivel() {
         //Só há uma situação em que a peça pousa numa peça adversária (clicavel) que é quando esta é comivel
         if (!tab1.casas.get(finID).pecas.isEmpty()) {
@@ -432,6 +440,46 @@ public class Scene2Controller implements Initializable {
                 tab1.casas.get(finID).rempeca();
             }
         }
+    }
+      //verifica se todas as peças brancas se encontram no ultimo quadrante do tabuleiro
+    private void condicaovitoria(String jog, int posFinal) {
+        if (posFinal == 15) {
+            ronda.setTextFill(Color.GOLD);
+            ronda.setScaleX(5);
+            ronda.setScaleY(5);
+            ronda.setLayoutX(100);
+            ronda.setRotate(0.1);
+            ronda.setText(jog + "GANHOU !!!!");
+            animavitoria();
+                    Rects.forEach((f) -> {
+            f.setDisable(true);
+            System.out.print(f.getId());
+
+        });
+
+        }
+
+    }
+
+    private void animavitoria() {
+        //Instantiating TranslateTransition class   
+        TranslateTransition translate = new TranslateTransition();
+        //shifting the X coordinate of the centre of the circle by 400   
+        translate.setByX(200);
+        //setting the duration for the Translate transition   
+        translate.setDuration(Duration.millis(500));
+        //setting cycle count for the Translate transition   
+        translate.setCycleCount(100);
+        //the transition will set to be auto reversed by setting this to true   
+        translate.setAutoReverse(true);
+        //setting Circle as the node onto which the transition will be applied  
+        translate.setNode(ronda);
+        //playing the transition   
+        translate.play();
+
+        translate.setOnFinished(e -> imprimedados());
+
+        System.out.println("ANIMACAO ACABOU");
     }
 
 }

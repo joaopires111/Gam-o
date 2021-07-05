@@ -42,12 +42,12 @@ public class tabuleiro {
             }
 
         }
-
-        iniciapecas();
+        //variação para teste se condiçoes de vitoria estao corretas
+        iniciapecastesteFinal();
 
     }
 
-    public void iniciapecas() {
+    public final void iniciapecas() {       
 
         //pecas brancas
         for (int i = 0; i < 2; i++) {
@@ -77,6 +77,58 @@ public class tabuleiro {
             casas.get(19).addpecapreta();
         }
 
+    }
+    //impressão de peças para simular o final do jogo
+        public final void iniciapecastesteFinal() {       
+            
+        for (int i = 0; i < 6; i++) {
+            casas.get(i + 19).addpecabranca();
+        }
+
+        //pecas brancas
+        for (int i = 0; i < 9; i++) {
+            casas.get(24).addpecabranca();       
+        }
+
+        //pecas pretas
+        for (int i = 0; i < 2; i++) {
+            casas.get(1).addpecapreta();
+        }
+        for (int i = 0; i < 5; i++) {
+            casas.get(12).addpecapreta();
+        }
+
+
+    }
+    
+        public boolean fimdejogo(String jogador) {      
+        int total = 0;
+        //percorre casas 24 a 19 se for o jogador 1
+        if ("jog1".equals(jogador)) {
+            for (int i = 24; i >= 19; i--) {
+                //se não está vazio
+                if (!casas.get(i).vazio()) {
+                    //se as peças pertencem ao jogador 1
+                    if (casas.get(i).pecas.get(0).jogador.compareTo(jogador) == 0) {
+                        total += casas.get(i).pecas.size();
+                    }
+                }
+            }
+        }
+        //percorre casas 0 a 6 se for o jogador 2
+        else if ("jog2".equals(jogador)) {
+            for (int i = 1; i <= 6; i++) {
+                //se está vazio
+                if (!casas.get(i).vazio()) {
+                    //se as peças pertencem ao jogador 2
+                    if (casas.get(i).pecas.get(0).jogador.compareTo(jogador) == 0) {
+                        total += casas.get(i).pecas.size();
+                    }
+                }
+            }
+        }
+        System.out.println("TOTAL " + total);
+        return total <= 15;
     }
 
 

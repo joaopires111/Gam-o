@@ -72,7 +72,7 @@ public class FXMLDocumentController implements Initializable {
         tab1 = new tabuleiro();
         jog = new jogador(0, jogador);
         adv = new jogador(25, adversario);
-
+        fimjogo = false;
         phase = 0;
 
         //---------------------------------server-----------------------------------------
@@ -104,15 +104,12 @@ public class FXMLDocumentController implements Initializable {
         } else if (phase == 3) {
             Rectangle b = (Rectangle) event.getSource();
             finID = Integer.parseInt(b.getId());
-            if (Rects.get(finID).isDisable() == false && finID != 25 && finID != 0) {
-                click2();
 
+            if ((finID != 25 && finID != 0) || fimjogo) {
+                click2();
             }
-        } else if (phase == 5){
-                        System.out.println("cringe");
-        
         }
-        
+
     }
 
     private void movepeca(int diferencaX, int diferencaY) {
@@ -162,6 +159,16 @@ public class FXMLDocumentController implements Initializable {
     private void imprime() {
         imprimeretangulos();
         imprimepecas();
+
+    }
+
+    public void criardados() {
+        Rectangle dado1 = new Rectangle();
+        Rectangle dado2 = new Rectangle();
+        dado1.setLayoutX(200);
+        dado2.setLayoutY(200);
+        pane.getChildren().add(dado1);
+
     }
 
     public void imprimeretangulos() {
@@ -205,13 +212,13 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     public void imprimepecas() {
-        Circs = new Circle[26][20];
+        Circs = new Circle[26][16];
         pane.getChildren().removeIf(node -> node instanceof Circle);
         for (int i = 0; i <= 25; i++) {
             for (int h = 0; h < tab1.casas.get(i).pecas.size(); h++) {
 
                 Circs[i][h] = new Circle(tab1.casas.get(i).pecas.get(h).posX, tab1.casas.get(i).pecas.get(h).posY, 18);
-                System.out.println("Circulo \n i:"+ i + "   h:" + h);
+
                 if ("jog1".compareTo(tab1.casas.get(i).pecas.get(h).jogador) == 0) {
                     Circs[i][h].setFill(Color.WHITE);
                     Circs[i][h].setStroke(Color.BLACK);
@@ -257,7 +264,9 @@ public class FXMLDocumentController implements Initializable {
         tab1.dado2.rodadado();
         phase = 2;
         ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
-        bdados.setDisable(true);
+        bdados.setText("Passar Jogada");
+        bdados.setDisable(false);
+        bdados.setOnMouseClicked(event1 -> passarjogada());
 
     }
 
@@ -315,8 +324,7 @@ public class FXMLDocumentController implements Initializable {
         //correção automatica de foreach feita pelo netbeans (functional operation ?)
         Rects.forEach((f) -> {
             f.setDisable(true);
-            System.out.print(f.getId());
-
+            
         });
 
         Rects.get(iniID).setFill(Color.RED);
@@ -352,6 +360,8 @@ public class FXMLDocumentController implements Initializable {
         if ("jog2".compareTo(jogador) == 0) {
             tab1.casas.get(finID).addpecapreta();
         }
+        //verifica se o jogo se encontra na fase final
+        fimjogo = tab1.fimdejogo(jogador);
 
         //Remove peça do inicio
         tab1.casas.get(iniID).rempeca();
@@ -367,15 +377,19 @@ public class FXMLDocumentController implements Initializable {
         }
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
-            bdados.setText("Passar Jogada");
-            bdados.setDisable(false);
-            bdados.setOnMouseClicked(event1 -> passarjogada());
+
         }
 
-        ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
-        movepeca(finX - iniX, finY - iniY);
+    
+        if (finID == 25) {
+            condicaovitoria("jog1", 25);
+        } else if (finID == 0) {
+            condicaovitoria("jog2", 0);
+        } else {
 
-
+            ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
+            movepeca(finX - iniX, finY - iniY);
+        }
         /*  for (Rectangle f : Rects) {
                 f.setDisable(true);
             }*/
@@ -388,9 +402,11 @@ public class FXMLDocumentController implements Initializable {
             ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
         }
     }
-        //---------------------------------server-----------------------------------------
+    //---------------------------------server-----------------------------------------
+
     private void passarjogada() {
         bdados.setDisable(true);
+
         try {
             servidor.enviarPecas(tab1);
         } catch (IOException | ClassNotFoundException ex) {
@@ -422,7 +438,8 @@ public class FXMLDocumentController implements Initializable {
         ronda.setText("jogada recebida \n ronda:" + phase);
 
     }
-        //---------------------------------server-----------------------------------------
+    //---------------------------------server-----------------------------------------
+
     private void comivel() {
         //Só há uma situação em que a peça pousa numa peça adversária (clicavel) que é quando esta é comivel
         if (!tab1.casas.get(finID).pecas.isEmpty()) {
@@ -438,6 +455,47 @@ public class FXMLDocumentController implements Initializable {
                 tab1.casas.get(finID).rempeca();
             }
         }
+    }
+
+    //verifica se todas as peças brancas se encontram no ultimo quadrante do tabuleiro
+    private void condicaovitoria(String jog, int posFinal) {
+        if (posFinal == 15) {
+            ronda.setTextFill(Color.GOLD);
+            ronda.setScaleX(5);
+            ronda.setScaleY(5);
+            ronda.setLayoutX(100);
+            ronda.setRotate(0.1);
+            ronda.setText(jog + "GANHOU !!!!");
+            animavitoria();
+                    Rects.forEach((f) -> {
+            f.setDisable(true);
+            System.out.print(f.getId());
+
+        });
+
+        }
+
+    }
+
+    private void animavitoria() {
+        //Instantiating TranslateTransition class   
+        TranslateTransition translate = new TranslateTransition();
+        //shifting the X coordinate of the centre of the circle by 400   
+        translate.setByX(200);
+        //setting the duration for the Translate transition   
+        translate.setDuration(Duration.millis(500));
+        //setting cycle count for the Translate transition   
+        translate.setCycleCount(100);
+        //the transition will set to be auto reversed by setting this to true   
+        translate.setAutoReverse(true);
+        //setting Circle as the node onto which the transition will be applied  
+        translate.setNode(ronda);
+        //playing the transition   
+        translate.play();
+
+        translate.setOnFinished(e -> imprimedados());
+
+        System.out.println("ANIMACAO ACABOU");
     }
 
 }
