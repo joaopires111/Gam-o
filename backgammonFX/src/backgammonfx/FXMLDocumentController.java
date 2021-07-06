@@ -163,7 +163,8 @@ public class FXMLDocumentController implements Initializable {
     private void imprime() {
         imprimeretangulos();
         imprimepecas();
-        labelfim.setText("Fase final:"+ fimjogo);
+        labelfim.setText("Fase final:" + fimjogo);
+        pane.getChildren().remove(labelfim);
         pane.getChildren().add(labelfim);
 
     }
@@ -178,25 +179,45 @@ public class FXMLDocumentController implements Initializable {
     }
 //Imprime os retangulos de ambos os jogadores
 
-    public void imprimeretangulosjog(int i, jogador jog) {
+    public void imprimeretangulosjog(int id, jogador jog) {
 
-        Rects.add(i, new Rectangle(50, 180));
-        Rects.get(i).setLayoutX(jog.posX);
-        Rects.get(i).setLayoutY(jog.posY);
+        Rects.add(id, new Rectangle(50, 180));
+        Rects.get(id).setLayoutX(jog.posX);
+        Rects.get(id).setLayoutY(jog.posY);
 
         if ("jog1".equals(jog.jogador)) {
-            Rects.get(i).setFill(Color.BLACK);
-            Rects.get(i).setStroke(Color.GOLD);
-            Rects.get(i).setStrokeWidth(3);
+            Rects.get(id).setFill(Color.BLACK);
+            Rects.get(id).setStroke(Color.GOLD);
+            Rects.get(id).setStrokeWidth(3);
         }
         if ("jog2".equals(jog.jogador)) {
-            Rects.get(i).setFill(Color.RED);
-            Rects.get(i).setStroke(Color.GOLD);
-            Rects.get(i).setStrokeWidth(3);
+            Rects.get(id).setFill(Color.RED);
+            Rects.get(id).setStroke(Color.GOLD);
+            Rects.get(id).setStrokeWidth(3);
         }
-        Rects.get(i).setId(String.valueOf(i));
+        Rects.get(id).setId(String.valueOf(id));
 
-        Rects.get(i).setOnMousePressed(event -> pressed(event));
+        Rects.get(id).setOnMousePressed(event -> pressed(event));
+    }
+
+    public void imprimepecasjog(int id, jogador jog) {
+        for (int h = 0; h < jog.pecas.size(); h++) {
+
+            Circs[id][h] = new Circle(jog.pecas.get(h).posX, jog.pecas.get(h).posY, 18);
+
+            if ("jog1".compareTo(jog.jogador) == 0) {
+                Circs[id][h].setFill(Color.WHITE);
+                Circs[id][h].setStroke(Color.BLACK);
+            }
+            if ("jog2".compareTo(jog.jogador) == 0) {
+                Circs[id][h].setFill(Color.BLACK);
+                Circs[id][h].setStroke(Color.WHITE);
+            }
+            Circs[id][h].setId(id + "" + h);
+
+            pane.getChildren().add(Circs[id][h]);
+        }
+
     }
 
     public void imprimeretangulos() {
@@ -253,10 +274,12 @@ public class FXMLDocumentController implements Initializable {
                 Circs[i][h].setId(i + "" + h);
 
                 pane.getChildren().add(Circs[i][h]);
-            }
 
-            //IMPRIMIR CIRCULOS DE CADA JOGADOR 
+            }
         }
+        imprimepecasjog(jog.id, jog);
+        imprimepecasjog(adv.id, adv);
+        //IMPRIMIR CIRCULOS DE CADA JOGADOR ---------------------------------------------------------------------------------------------------------
 
     }
 
@@ -358,23 +381,24 @@ public class FXMLDocumentController implements Initializable {
         });
         //desbloqueio da ultima posicao
         Rects.get(iniID).setFill(Color.RED);
-        if (fimjogo && (posID1 >= 25 || posID2 >= 25)) {
-            Rects.get(jog.id).setDisable(false);
-            Rects.get(jog.id).setFill(Color.DARKSEAGREEN);
-            System.out.println("weweweeeeeeeeeeeeeeeeee");
-            System.out.println("weweweeeeeeeeeeeeeeeeee");
+        if (fimjogo) {
+            if (tab1.dado1.uso == false && posID1 >= 25) {
+                Rects.get(jog.id).setDisable(false);
+                Rects.get(jog.id).setFill(Color.DARKSEAGREEN);
+            }
+            if (tab1.dado2.uso == false && posID2 >= 25) {
+                Rects.get(jog.id).setDisable(false);
+                Rects.get(jog.id).setFill(Color.DARKSEAGREEN);
+            }
         }
 
         if (tab1.dado1.uso == false && clicavel(posID1)) {
             Rects.get(posID1).setFill(Color.DARKSEAGREEN);
             Rects.get(posID1).setDisable(false);
-
         }
         if (tab1.dado2.uso == false && clicavel(posID2)) {
             Rects.get(posID2).setFill(Color.DARKSEAGREEN);
             Rects.get(posID2).setDisable(false);
-            //desbloqueio da ultima posicao            
-
         }
 
     }
@@ -389,7 +413,6 @@ public class FXMLDocumentController implements Initializable {
         } else if (finID == 26 || finID == 27) {
             if (finID == jog.id) {
                 clickfimjogo();
-                System.out.println("Fim dde jogo confirmado");
                 ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
                 movepeca(finX - iniX, finY - iniY);
             }
@@ -405,6 +428,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void clickfimjogo() {
+        System.out.println("weweweeeeeeeeeeeeeeeeee");
+        System.out.println("weweweeeeeeeeeeeeeeeeee");
         //Adicionar peça para acertar a posição da animação final    
         jog.addpecablank();
         //verificar o  H (id da ultima peça dentro da casa)
@@ -422,17 +447,31 @@ public class FXMLDocumentController implements Initializable {
         //Remove peça do inicio
         tab1.casas.get(iniID).rempeca();
         Rects.get(finID).setFill(Color.BLUE);
-        //verificar que dado escolheu (a segunda condição é para caso os dois dados sejam iguais)
-        if (finID == posID1 && tab1.dado1.uso == false) {
-            tab1.dado1.uso = true;
-            phase = 2;
-        } else if (finID == posID2) {
-            tab1.dado2.uso = true;
-            phase = 2;
+        //verificar que dado escolheu
+
+        if (posID1 <= posID2) {
+            if (posID1 >= finID && tab1.dado1.uso == false) {
+                tab1.dado1.uso = true;
+                phase = 2;
+            } else if (posID2 >= finID) {
+                tab1.dado2.uso = true;
+                phase = 2;
+            }
+        }
+        else if (posID1 >= posID2) {
+            if (posID2 >= finID && tab1.dado2.uso == false) {
+                tab1.dado2.uso = true;
+                phase = 2;
+            } else if (posID1 >= finID) {
+                tab1.dado1.uso = true;
+                phase = 2;
+            }
         }
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
         }
+        System.out.println("uso dado1\n" + tab1.dado1.uso);
+        System.out.println("uso dado2\n" + tab1.dado2.uso);
 
         condicaovitoria(jog.jogador, jog.id);
 
@@ -455,11 +494,13 @@ public class FXMLDocumentController implements Initializable {
         if ("jog2".compareTo(jogador) == 0) {
             tab1.casas.get(finID).addpecapreta();
         }
-        //verifica se o jogo se encontra na fase final
-        fimjogo = tab1.fimdejogo(jogador);
 
         //Remove peça do inicio
         tab1.casas.get(iniID).rempeca();
+        //verifica se o jogo se encontra na fase final (apos estar na fase final nao verifica mais)
+        if (fimjogo == false) {
+            fimjogo = tab1.fimdejogo(jogador);
+        }
         Rects.get(finID).setFill(Color.BLUE);
         //verificar que dado escolheu (a segunda condição é para caso os dois dados sejam iguais)
         if (finID == posID1 && tab1.dado1.uso == false) {
@@ -473,6 +514,8 @@ public class FXMLDocumentController implements Initializable {
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
         }
+        System.out.println("uso dado1\n" + tab1.dado1.uso);
+        System.out.println("uso dado2\n" + tab1.dado2.uso);
     }
 
     private void cancelarjog() {

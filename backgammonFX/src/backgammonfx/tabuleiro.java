@@ -82,13 +82,13 @@ public class tabuleiro {
         public final void iniciapecastesteFinal() {       
             
         for (int i = 0; i < 6; i++) {
-            casas.get(i + 19).addpecabranca();
+            casas.get(i + 18).addpecabranca();
+            casas.get(i + 18).addpecabranca();            
+            
         }
-
-        //pecas brancas
-        for (int i = 0; i < 9; i++) {
-            casas.get(24).addpecabranca();       
-        }
+            casas.get(19).addpecabranca();   
+            casas.get(19).addpecabranca();               
+            casas.get(19).addpecabranca();   
 
         //pecas pretas
         for (int i = 0; i < 2; i++) {
@@ -129,7 +129,7 @@ public class tabuleiro {
                 }
             }
         }
-
+        
         return total >= 15;
     }
 

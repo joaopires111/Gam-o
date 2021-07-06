@@ -70,6 +70,5 @@ public class casa implements Serializable {
             this.jogavel = !jogavel;
 
         }
-
     }
 }
