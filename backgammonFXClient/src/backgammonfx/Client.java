@@ -15,7 +15,7 @@ public class Client {
     ObjectInputStream din;
     ObjectOutputStream dout;
     packet p;
-
+    jogador jog;
     ArrayList<casa> casas;
     static final int PORT = 3192;
 
@@ -70,5 +70,22 @@ public class Client {
         dout.writeObject(tab1.casas);
         System.out.println("mensage enviada");
 
+    }
+    //------------------------ENVIAR JOG---------------------------------------
+    public void enviarJog(jogador jog) throws IOException, ClassNotFoundException {
+
+        System.out.println("A ENVIAR:" + jog.jogador);
+        dout.writeObject(jog);
+        System.out.println("mensage enviada");
+
+    }
+    //-------------------------RECEBER JOG-------------------------------------
+
+    public jogador receberJog() throws IOException, ClassNotFoundException {
+
+        System.out.println("A RECEBER jogador");
+        jog = (jogador) din.readObject();
+        System.out.println("mensage recebida:" + jog.jogador);
+        return jog;
     }
 }

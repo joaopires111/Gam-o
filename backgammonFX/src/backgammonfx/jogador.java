@@ -5,13 +5,14 @@
  */
 package backgammonfx;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author User
  */
-public class jogador {
+public class jogador implements Serializable{
 
     ArrayList<peca> pecas;
     int posX;

@@ -87,12 +87,11 @@ public class tabuleiro {
             casas.get(19).addpecabranca();    
 
         //pecas pretas
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 14; i++) {
             casas.get(1).addpecapreta();
         }
-        for (int i = 0; i < 5; i++) {
-            casas.get(12).addpecapreta();
-        }
+            casas.get(7).addpecapreta();
+     
 
 
     }

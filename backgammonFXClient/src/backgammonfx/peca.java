@@ -16,7 +16,7 @@ public class peca implements Serializable{
     String jogador;
     int posX, posY;
     public peca(String jogador, int posX, int posY) {
-
+        
         this.posX = posX;
         this.posY = posY;
         this.jogador = jogador;

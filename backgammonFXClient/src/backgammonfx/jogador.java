@@ -5,13 +5,14 @@
  */
 package backgammonfx;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author User
  */
-public class jogador {
+public class jogador implements Serializable {
 
     ArrayList<peca> pecas;
     int posX;
@@ -25,7 +26,6 @@ public class jogador {
         this.jogador = jogador;
         this.posX = posX;
         this.posY = posY;
-
     }
 
     public void addpecabranca() {
@@ -52,7 +52,8 @@ public class jogador {
         }
         return posycorr;
     }
-        public void rempeca() {
+
+    public void rempeca() {
         pecas.remove(pecas.size() - 1);
     }
 }

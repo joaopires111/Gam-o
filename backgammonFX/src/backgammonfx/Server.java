@@ -16,12 +16,15 @@ public class Server {
     ObjectInputStream din;
     ObjectOutputStream dout;
     packet p;
+    jogador jog;
     static final int PORT = 3192;
     ArrayList<casa> casas;
+
     public Server() throws Exception {
         StartServer();
         receber();
     }
+
     //-----------------------START SERVIDOR--------------------------
     public void StartServer() throws ClassNotFoundException {
         try {
@@ -37,13 +40,14 @@ public class Server {
             System.out.println(ex);
         }
     }
+
     //-----------------------CLOSE SERVIDOR--------------------------
     public void CloseServer() throws ClassNotFoundException {
         try {
             s.close();
         } catch (IOException ex) {
             System.out.println(ex);
-            
+
         }
     }
 
@@ -55,6 +59,7 @@ public class Server {
         System.out.println("mensage recebida:" + p.message);
 
     }
+
     //------------------------ENVIAR CASAS---------------------------------------
     public void enviarPecas(tabuleiro tab1) throws IOException, ClassNotFoundException {
 
@@ -63,14 +68,32 @@ public class Server {
         System.out.println("mensage enviada");
 
     }
-        //-------------------------RECEBER CASAS-------------------------------------
-    public ArrayList<casa> receberpecas() throws IOException, ClassNotFoundException {
+    //-------------------------RECEBER CASAS-------------------------------------
 
+    public ArrayList<casa> receberpecas() throws IOException, ClassNotFoundException {
 
         System.out.println("A RECEBER casas");
         casas = (ArrayList<casa>) din.readObject();
         System.out.println("mensage recebida:");
         return casas;
+    }
+
+    //------------------------ENVIAR JOG---------------------------------------
+    public void enviarJog(jogador jog) throws IOException, ClassNotFoundException {
+
+        System.out.println("A ENVIAR:" + jog.jogador);
+        dout.writeObject(jog);
+        System.out.println("mensage enviada");
+
+    }
+    //-------------------------RECEBER JOG-------------------------------------
+
+    public jogador receberJog() throws IOException, ClassNotFoundException {
+
+        System.out.println("A RECEBER jogador");
+        jog = (jogador) din.readObject();
+        System.out.println("mensage recebida:" + jog.jogador);
+        return jog;
     }
 
 }

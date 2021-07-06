@@ -14,6 +14,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -50,7 +52,7 @@ public class Scene2Controller implements Initializable {
     Pane pane;
     @FXML
     Button cancelar;
-    Label ronda;
+    Label ronda, labelfim;
     Button bdados;
     tabuleiro tab1;
     jogador jog, adv;
@@ -66,54 +68,61 @@ public class Scene2Controller implements Initializable {
     int posID1, posID2;
     int phase;
     boolean fimjogo;
-    final String jogador = "jog2", adversario = "jog1";
+    final String jogador = "jog2";
 
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        tab1 = new tabuleiro();
-
-        phase = 0;
-        fimjogo = false;
-
-        //---------------------------------server-----------------------------------------
+        //---------------------------------cliente envia msg de teste-----------------------------------------
         try {
             cliente = new Client();
         } catch (Exception ex) {
             System.out.println(ex);
         }
-        try {
-            tab1.casas = cliente.receberpecas();
-        } catch (IOException | ClassNotFoundException ex) {
-            System.out.println(ex);
-        }
 
+        Button iniciarjogo = new Button("Receber primeira jogada");
+        iniciarjogo.setLayoutX(350);
+        iniciarjogo.setLayoutY(200);
+        iniciarjogo.setOnMouseClicked(even -> iniciarjogo());
+        pane.getChildren().add(iniciarjogo);
+
+    }
+
+    public void iniciarjogo() {
+
+        tab1 = new tabuleiro();
+        labelfim = new Label("is" + fimjogo);
+        labelfim.setLayoutX(600);
+        labelfim.setLayoutY(180);
+        fimjogo = false;
+        phase = 0;
+        //---------------------------------Client recebe pecas e jogadores-----------------------------------------     
+            receberjogada();
         //--------------------------IMPRIMIR------------------------------------
         phase = 1;
         pane.getChildren().clear();
         imprime();
         imprimeronda();
         imprimebotao();
-//-------------------------------inicio do jogo---------------------------------
-
     }
 
-private void pressed(MouseEvent event) {
+    private void pressed(MouseEvent event) {
         if (phase == 2) {
             Rectangle b = (Rectangle) event.getSource();
             iniID = Integer.parseInt(b.getId());
-            if (tab1.casas.get(iniID).jogavel && Rects.get(iniID).isDisable() == false) {
+            if (tab1.casas.get(iniID).jogavel) {
                 click1();
             }
 
         } else if (phase == 3) {
             Rectangle b = (Rectangle) event.getSource();
             finID = Integer.parseInt(b.getId());
-            
-            if ((finID != 25 && finID != 0) || fimjogo) {
+
+            if ((finID < 25 && finID != 0) || fimjogo) {
                 click2();
             }
         }
+
     }
 
     private void movepeca(int diferencaX, int diferencaY) {
@@ -163,6 +172,60 @@ private void pressed(MouseEvent event) {
     private void imprime() {
         imprimeretangulos();
         imprimepecas();
+        labelfim.setText("Fase final:" + fimjogo);
+        pane.getChildren().remove(labelfim);
+        pane.getChildren().add(labelfim);
+
+    }
+
+    public void criardados() {
+        Rectangle dado1 = new Rectangle();
+        Rectangle dado2 = new Rectangle();
+        dado1.setLayoutX(200);
+        dado2.setLayoutY(200);
+        pane.getChildren().add(dado1);
+
+    }
+//Imprime os retangulos de ambos os jogadores
+
+    public void imprimeretangulosjog(int id, jogador jog) {
+        Rects.add(id, new Rectangle(50, 180));
+        Rects.get(id).setLayoutX(jog.posX);
+        Rects.get(id).setLayoutY(jog.posY);
+
+        if ("jog1".equals(jog.jogador)) {
+            Rects.get(id).setFill(Color.BLACK);
+            Rects.get(id).setStroke(Color.GOLD);
+            Rects.get(id).setStrokeWidth(3);
+        }
+        if ("jog2".equals(jog.jogador)) {
+            Rects.get(id).setFill(Color.RED);
+            Rects.get(id).setStroke(Color.GOLD);
+            Rects.get(id).setStrokeWidth(3);
+        }
+        Rects.get(id).setId(String.valueOf(id));
+
+        Rects.get(id).setOnMousePressed(event -> pressed(event));
+    }
+
+    public void imprimepecasjog(int id, jogador jog) {
+        for (int h = 0; h < jog.pecas.size(); h++) {
+
+            Circs[id][h] = new Circle(jog.pecas.get(h).posX, jog.pecas.get(h).posY, 18);
+
+            if ("jog1".compareTo(jog.jogador) == 0) {
+                Circs[id][h].setFill(Color.WHITE);
+                Circs[id][h].setStroke(Color.BLACK);
+            }
+            if ("jog2".compareTo(jog.jogador) == 0) {
+                Circs[id][h].setFill(Color.BLACK);
+                Circs[id][h].setStroke(Color.WHITE);
+            }
+            Circs[id][h].setId(id + "" + h);
+
+            pane.getChildren().add(Circs[id][h]);
+        }
+
     }
 
     public void imprimeretangulos() {
@@ -177,34 +240,32 @@ private void pressed(MouseEvent event) {
 
             if ("AQUA".equals(tab1.casas.get(i).cor)) {
                 Rects.get(i).setFill(Color.AQUAMARINE);
+                Rects.get(i).setStroke(Color.BLACK);
             }
             if ("CHOCOLATE".equals(tab1.casas.get(i).cor)) {
                 Rects.get(i).setFill(Color.BROWN);
+                Rects.get(i).setStroke(Color.BLACK);
             }
             if ("".equals(tab1.casas.get(i).cor)) {
                 Rects.get(i).setOpacity(0.10);
             }
-            /*       if (tab1.casas.get(i).clicavel() && phase == 2) {
-                Rects.get(i).setFill(Color.DIMGRAY);
-                Rects.get(i).setDisable(true);
-                
-            }*/
-            Rects.get(i).setStroke(Color.BLACK);
             Rects.get(i).setId(String.valueOf(i));
-            //Rects.get(i).setDisable(false);
 
             Rects.get(i).setOnMousePressed(event -> pressed(event));
-
-        }
+        }   
+        
+        //jog2 tem de ser primeiro
+        imprimeretangulosjog(adv.id, adv);      
+        imprimeretangulosjog(jog.id, jog);  
 
         pane.getChildren().addAll(Rects);
-        System.out.println("rectangulos imprimidos");
+
     }
 //necessario repetir "for" para garantir que as peças estejam no topo da hierarquia
 
     @FXML
     public void imprimepecas() {
-        Circs = new Circle[26][20];
+        Circs = new Circle[30][16];
         pane.getChildren().removeIf(node -> node instanceof Circle);
         for (int i = 0; i <= 25; i++) {
             for (int h = 0; h < tab1.casas.get(i).pecas.size(); h++) {
@@ -220,13 +281,16 @@ private void pressed(MouseEvent event) {
                     Circs[i][h].setFill(Color.BLACK);
                     Circs[i][h].setStroke(Color.WHITE);
                     tab1.casas.get(i).setjogavel(jogador, false);
-
                 }
-
                 Circs[i][h].setId(i + "" + h);
+
                 pane.getChildren().add(Circs[i][h]);
+
             }
         }
+        imprimepecasjog(jog.id, jog);
+        imprimepecasjog(adv.id, adv);
+        //IMPRIMIR CIRCULOS DE CADA JOGADOR ---------------------------------------------------------------------------------------------------------
 
     }
 
@@ -235,6 +299,7 @@ private void pressed(MouseEvent event) {
         ronda.setLayoutX(300);
         ronda.setLayoutY(180);
         pane.getChildren().add(ronda);
+
     }
 
     public void imprimebotao() {
@@ -252,6 +317,7 @@ private void pressed(MouseEvent event) {
     }
 
     private void imprimedados() {
+
         tab1.dado1.rodadado();
         tab1.dado2.rodadado();
         phase = 2;
@@ -265,18 +331,24 @@ private void pressed(MouseEvent event) {
     //--------------------------------------------JOGADAS-----------------------------------------------
     //verifica se posicao de destino encontra se vazia e caso nao esteja vazia se contem peças do oponente
     private boolean clicavel(int posID) {
-        if (!tab1.casas.get(posID).pecas.isEmpty()) {
-            if (jogador.compareTo(tab1.casas.get(posID).pecas.get(0).jogador) == 0) {
-                return true;
-            } else if (tab1.casas.get(posID).pecas.size() == 1) {
-                System.out.println("SIZE :" + tab1.casas.get(posID).pecas.size());
-                return true;
+        try {
+            if (!tab1.casas.get(posID).pecas.isEmpty()) {
+                if (jogador.compareTo(tab1.casas.get(posID).pecas.get(0).jogador) == 0) {
+                    return true;
+                } else if (tab1.casas.get(posID).pecas.size() == 1) {
+                    System.out.println("SIZE :" + tab1.casas.get(posID).pecas.size());
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
-                return false;
+                return true;
             }
-        } else {
-            return true;
+        } catch (Exception ex) {
+            System.out.println(ex);
+            return false;
         }
+
     }
 
     private void click1() {
@@ -312,51 +384,143 @@ private void pressed(MouseEvent event) {
             posID2 = iniID - tab1.dado2.face;
 
         }
+
         //correção automatica de foreach feita pelo netbeans (functional operation ?)
         Rects.forEach((f) -> {
             f.setDisable(true);
-            System.out.print(f.getId());
 
         });
-
+        //desbloqueio da ultima posicao
         Rects.get(iniID).setFill(Color.RED);
+        if (fimjogo) {
+            if (tab1.dado1.uso == false && posID1 >= 25 || posID1 <= 0) {
+                Rects.get(jog.id).setDisable(false);
+                Rects.get(jog.id).setFill(Color.DARKSEAGREEN);
+                                System.out.println("id do jog ativado" + jog.id);
+            }
+            if (tab1.dado2.uso == false && posID2 >= 25 || posID2 <= 0) {
+                Rects.get(jog.id).setDisable(false);
+                Rects.get(jog.id).setFill(Color.DARKSEAGREEN);
+                                System.out.println("id do jog ativado" + jog.id);
+            }
+        }
+
         if (tab1.dado1.uso == false && clicavel(posID1)) {
             Rects.get(posID1).setFill(Color.DARKSEAGREEN);
             Rects.get(posID1).setDisable(false);
+            
         }
         if (tab1.dado2.uso == false && clicavel(posID2)) {
             Rects.get(posID2).setFill(Color.DARKSEAGREEN);
             Rects.get(posID2).setDisable(false);
         }
+
     }
 
     private void click2() {
         System.out.print(finID);
-        //Adicionar peça para acertar a posição da animação final            
-        tab1.casas.get(finID).addpecablank();
 
+        if (finID == 0 || finID == 25) {
+            //nao é aceite            
+            System.out.println("wowoooooooooooooooooooo");
+
+        } else if (finID == 26 || finID == 27) {
+            if (finID == jog.id) {
+                clickfimjogo();
+                ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
+                movepeca(finX - iniX, finY - iniY);
+            }
+        } else {
+            clicknormal();
+            ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
+            movepeca(finX - iniX, finY - iniY);
+        }
+
+        /*  for (Rectangle f : Rects) {
+                f.setDisable(true);
+            }*/
+    }
+
+    public void clickfimjogo() {
+        System.out.println("weweweeeeeeeeeeeeeeeeee");
+        System.out.println("weweweeeeeeeeeeeeeeeeee");
+        //Adicionar peça para acertar a posição da animação final    
+        jog.addpecablank();
+        //verificar o  H (id da ultima peça dentro da casa)
+        finH = jog.pecas.size() - 1;
+        finX = jog.pecas.get(finH).posX;
+        finY = jog.pecas.get(finH).posY;
+        //Remove peça blank
+        jog.rempeca();
+        if ("jog1".compareTo(jogador) == 0) {
+            jog.addpecabranca();
+        }
+        if ("jog2".compareTo(jogador) == 0) {
+            jog.addpecapreta();
+        }
+        //Remove peça do inicio
+        tab1.casas.get(iniID).rempeca();
+        Rects.get(finID).setFill(Color.BLUE);
+        //verificar que dado escolheu
+        
+        //caso a pos de destino seja 27 as peças estao a moverse na direcao contraria entao é necessario verificaçao de dados diferente
+        if ( finID == 27){
+        posID1 = posID1*-1 + 26;
+        posID2 = posID2*-1 + 26;        
+        }
+        if (posID1 <= posID2) {
+            if (posID1 + 1 >= finID && tab1.dado1.uso == false) {
+                tab1.dado1.uso = true;
+                phase = 2;
+            } else if (posID2 + 1 >= finID) {
+                tab1.dado2.uso = true;
+                phase = 2;
+            }
+        } else if (posID1 >= posID2) {
+            if (posID2 + 1 >= finID && tab1.dado2.uso == false) {
+                tab1.dado2.uso = true;
+                phase = 2;
+            } else if (posID1 + 1 >= finID) {
+                tab1.dado1.uso = true;
+                phase = 2;
+            }
+        }
+        if (tab1.dado1.uso && tab1.dado2.uso) {
+            phase = 4;
+        }
+        System.out.println("uso dado1\n" + tab1.dado1.uso);
+        System.out.println("uso dado2\n" + tab1.dado2.uso);
+
+        condicaovitoria(jog);
+
+    }
+
+    public void clicknormal() {
+        //Adicionar peça para acertar a posição da animação final    
+        tab1.casas.get(finID).addpecablank();
         //verificar o  H (id da ultima peça dentro da casa)
         finH = tab1.casas.get(finID).pecas.size() - 1;
         finX = tab1.casas.get(finID).pecas.get(finH).posX;
         finY = tab1.casas.get(finID).pecas.get(finH).posY;
         //Remove peça blank
         tab1.casas.get(finID).rempeca();
-
         comivel();
         if ("jog1".compareTo(jogador) == 0) {
             tab1.casas.get(finID).addpecabranca();
+
         }
         if ("jog2".compareTo(jogador) == 0) {
             tab1.casas.get(finID).addpecapreta();
         }
-        //verifica se o jogo se encontra na fase final
-        fimjogo = tab1.fimdejogo(jogador);
 
         //Remove peça do inicio
         tab1.casas.get(iniID).rempeca();
+        //verifica se o jogo se encontra na fase final (apos estar na fase final nao verifica mais)
+        if (fimjogo == false) {
+            fimjogo = tab1.fimdejogo(jogador);
+        }
         Rects.get(finID).setFill(Color.BLUE);
-
-        //verificar que dado escolheu
+        //verificar que dado escolheu (a segunda condição é para caso os dois dados sejam iguais)
         if (finID == posID1 && tab1.dado1.uso == false) {
             tab1.dado1.uso = true;
             phase = 2;
@@ -364,20 +528,12 @@ private void pressed(MouseEvent event) {
             tab1.dado2.uso = true;
             phase = 2;
         }
+
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
-            bdados.setText("Passar Jogada");
-            bdados.setDisable(false);
-            bdados.setOnMouseClicked(event1 -> passarjogada());
         }
-
-        ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
-        movepeca(finX - iniX, finY - iniY);
-
-
-        /*  for (Rectangle f : Rects) {
-                f.setDisable(true);
-            }*/
+        System.out.println("uso dado1\n" + tab1.dado1.uso);
+        System.out.println("uso dado2\n" + tab1.dado2.uso);
     }
 
     private void cancelarjog() {
@@ -391,11 +547,24 @@ private void pressed(MouseEvent event) {
 
     private void passarjogada() {
         bdados.setDisable(true);
+        //envia pecas
         try {
             cliente.enviarPecas(tab1);
         } catch (IOException | ClassNotFoundException ex) {
             System.out.println(ex);
         }
+        //envia jog      
+        try {
+            cliente.enviarJog(jog);
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex);
+        }
+        //envia adv        
+        try {
+            cliente.enviarJog(adv);
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex);
+        }          
 
         phase = 5;
         ronda.setText("a esperar pelo outro utilizador \n ronda:" + phase);
@@ -404,11 +573,25 @@ private void pressed(MouseEvent event) {
     }
 
     private void receberjogada() {
+        //recebe pecas
         try {
             tab1.casas = cliente.receberpecas();
         } catch (IOException | ClassNotFoundException ex) {
             System.out.println(ex);
         }
+        //recebe jog (adv)
+        try {
+            adv = cliente.receberJog();
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex);
+        }
+        //recebe adv (jog) 
+        try {
+            jog = cliente.receberJog();
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex);
+        }
+        
         pane.getChildren().clear();
         imprime();
         imprimeronda();
@@ -419,7 +602,7 @@ private void pressed(MouseEvent event) {
         phase = 1;
         tab1.dado1.uso = false;
         tab1.dado2.uso = false;
-        ronda.setText("jogada recebida \n ronda:" + phase);
+        ronda.setText("jogada recebida \n ronda:" + phase +"\njog"+jog.jogador + "\nadv"+ adv.jogador);
 
     }
     //---------------------------------server-----------------------------------------
@@ -440,9 +623,10 @@ private void pressed(MouseEvent event) {
             }
         }
     }
-      //verifica se todas as peças brancas se encontram no ultimo quadrante do tabuleiro
-    private void condicaovitoria(String jog, int posFinal) {
-        if (posFinal == 15) {
+
+    //verifica se todas as peças brancas se encontram no ultimo quadrante do tabuleiro
+    private void condicaovitoria(jogador jog) {
+        if (jog.pecas.size() >= 15) {
             ronda.setTextFill(Color.GOLD);
             ronda.setScaleX(5);
             ronda.setScaleY(5);
@@ -450,12 +634,16 @@ private void pressed(MouseEvent event) {
             ronda.setRotate(0.1);
             ronda.setText(jog + "GANHOU !!!!");
             animavitoria();
-                    Rects.forEach((f) -> {
-            f.setDisable(true);
-            System.out.print(f.getId());
+            Rects.forEach((f) -> {
+                f.setDisable(true);
+                System.out.print(f.getId());
 
-        });
-
+            });
+            try {
+                cliente.CloseServer();
+            } catch (ClassNotFoundException ex) {
+                System.out.println(ex);
+            }
         }
 
     }
@@ -475,9 +663,6 @@ private void pressed(MouseEvent event) {
         translate.setNode(ronda);
         //playing the transition   
         translate.play();
-
-        translate.setOnFinished(e -> imprimedados());
-
         System.out.println("ANIMACAO ACABOU");
     }
 

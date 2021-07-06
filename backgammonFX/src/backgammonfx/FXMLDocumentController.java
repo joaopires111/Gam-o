@@ -13,6 +13,8 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -69,17 +71,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        tab1 = new tabuleiro();
-        jog = new jogador(26, jogador, 655, 220);
-        adv = new jogador(27, adversario, 655, 0);
-        labelfim = new Label("is" + fimjogo);
-        labelfim.setLayoutX(600);
-        labelfim.setLayoutY(180);
-        fimjogo = false;
-
-        phase = 0;
-
-        //---------------------------------server-----------------------------------------
+        //---------------------------------Server start recebe msg de teste-----------------------------------------
         try {
             servidor = new Server();
         } catch (Exception ex) {
@@ -87,14 +79,32 @@ public class FXMLDocumentController implements Initializable {
         }
         System.out.println("pausa");
 
+        Button iniciarjogo = new Button("Iniciar jogo");
+        iniciarjogo.setLayoutX(350);
+        iniciarjogo.setLayoutY(200);
+        iniciarjogo.setOnMouseClicked(even -> iniciarjogo());
+        pane.getChildren().add(iniciarjogo);
+
+//-------------------------------inicio do jogo---------------------------------
+    }
+
+    public void iniciarjogo() {
+
+        tab1 = new tabuleiro();
+        jog = new jogador(26, jogador, 655, 220);
+        adv = new jogador(27, adversario, 655, 0);
+        labelfim = new Label("is" + fimjogo);
+        labelfim.setLayoutX(600);
+        labelfim.setLayoutY(180);
+        fimjogo = false;
+        phase = 0;
+
         //--------------------------IMPRIMIR------------------------------------
         phase = 1;
         pane.getChildren().clear();
         imprime();
         imprimeronda();
         imprimebotao();
-
-//-------------------------------inicio do jogo---------------------------------
     }
 
     private void pressed(MouseEvent event) {
@@ -248,7 +258,7 @@ public class FXMLDocumentController implements Initializable {
         imprimeretangulosjog(jog.id, jog);
         imprimeretangulosjog(adv.id, adv);
         pane.getChildren().addAll(Rects);
-        System.out.println("rectangulos imprimidos");
+        System.out.println("rectangulos imprimidos" + jog.id + " + " + adv.id);
     }
 //necessario repetir "for" para garantir que as peças estejam no topo da hierarquia
 
@@ -382,13 +392,15 @@ public class FXMLDocumentController implements Initializable {
         //desbloqueio da ultima posicao
         Rects.get(iniID).setFill(Color.RED);
         if (fimjogo) {
-            if (tab1.dado1.uso == false && posID1 >= 25) {
+            if (tab1.dado1.uso == false && posID1 >= 25 || posID1 <= 0) {
                 Rects.get(jog.id).setDisable(false);
                 Rects.get(jog.id).setFill(Color.DARKSEAGREEN);
+                System.out.println("id do jog ativado" + jog.id);
             }
-            if (tab1.dado2.uso == false && posID2 >= 25) {
+            if (tab1.dado2.uso == false && posID2 >= 25 || posID2 <= 0) {
                 Rects.get(jog.id).setDisable(false);
                 Rects.get(jog.id).setFill(Color.DARKSEAGREEN);
+                System.out.println("id do jog ativado" + jog.id);
             }
         }
 
@@ -448,25 +460,32 @@ public class FXMLDocumentController implements Initializable {
         tab1.casas.get(iniID).rempeca();
         Rects.get(finID).setFill(Color.BLUE);
         //verificar que dado escolheu
+        
+        //caso a pos de destino seja 27 as peças estao a moverse na direcao contraria entao é necessario verificaçao de dados diferente
+        if ( finID == 27){
+        posID1 = posID1*-1 + 26;
+        posID2 = posID2*-1 + 26;        
+        }
 
-        if (posID1 <= posID2) {
-            if (posID1+1 >= finID && tab1.dado1.uso == false) {
-                tab1.dado1.uso = true;
-                phase = 2;
-            } else if (posID2+1 >= finID) {
-                tab1.dado2.uso = true;
-                phase = 2;
+            if (posID1 <= posID2) {
+                if (posID1 + 1 >= finID && tab1.dado1.uso == false) {
+                    tab1.dado1.uso = true;
+                    phase = 2;
+                } else if (posID2 + 1 >= finID) {
+                    tab1.dado2.uso = true;
+                    phase = 2;
+                }
+            } else if (posID1 >= posID2) {
+                if (posID2 + 1 >= finID && tab1.dado2.uso == false) {
+                    tab1.dado2.uso = true;
+                    phase = 2;
+                } else if (posID1 + 1 >= finID) {
+                    tab1.dado1.uso = true;
+                    phase = 2;
+                }
             }
-        }
-        else if (posID1 >= posID2) {
-            if (posID2+1 >= finID && tab1.dado2.uso == false) {
-                tab1.dado2.uso = true;
-                phase = 2;
-            } else if (posID1 +1>= finID) {
-                tab1.dado1.uso = true;
-                phase = 2;
-            }
-        }
+        
+
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
         }
@@ -529,9 +548,21 @@ public class FXMLDocumentController implements Initializable {
 
     private void passarjogada() {
         bdados.setDisable(true);
-
+        //envia pecas
         try {
             servidor.enviarPecas(tab1);
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex);
+        }
+        //envia jog      
+        try {
+            servidor.enviarJog(jog);
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex);
+        }
+        //envia adv        
+        try {
+            servidor.enviarJog(adv);
         } catch (IOException | ClassNotFoundException ex) {
             System.out.println(ex);
         }
@@ -543,11 +574,25 @@ public class FXMLDocumentController implements Initializable {
     }
 
     private void receberjogada() {
+        //recebe pecas
         try {
             tab1.casas = servidor.receberpecas();
         } catch (IOException | ClassNotFoundException ex) {
             System.out.println(ex);
         }
+        //recebe jog (adv)
+        try {
+            adv = servidor.receberJog();
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex);
+        }
+        //recebe adv (jog) 
+        try {
+            jog = servidor.receberJog();
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex);
+        }
+
         pane.getChildren().clear();
         imprime();
         imprimeronda();
@@ -558,7 +603,7 @@ public class FXMLDocumentController implements Initializable {
         phase = 1;
         tab1.dado1.uso = false;
         tab1.dado2.uso = false;
-        ronda.setText("jogada recebida \n ronda:" + phase);
+        ronda.setText("jogada recebida \n ronda:" + phase + "\njog" + jog.jogador + "\nadv" + adv.jogador);
 
     }
     //---------------------------------server-----------------------------------------
@@ -595,7 +640,11 @@ public class FXMLDocumentController implements Initializable {
                 System.out.print(f.getId());
 
             });
-
+            try {
+                servidor.CloseServer();
+            } catch (ClassNotFoundException ex) {
+                System.out.println(ex);
+            }
         }
 
     }
@@ -615,9 +664,6 @@ public class FXMLDocumentController implements Initializable {
         translate.setNode(ronda);
         //playing the transition   
         translate.play();
-
-        translate.setOnFinished(e -> imprimedados());
-
         System.out.println("ANIMACAO ACABOU");
     }
 
