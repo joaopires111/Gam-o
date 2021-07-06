@@ -79,16 +79,12 @@ public class tabuleiro {
 
     }
     //impressão de peças para simular o final do jogo
-        public final void iniciapecastesteFinal() {       
+        public final void iniciapecastesteFinal() {
             
-        for (int i = 0; i < 6; i++) {
-            casas.get(i + 18).addpecabranca();
-            casas.get(i + 18).addpecabranca();            
-            
+                for (int i = 0; i < 14; i++) {
+            casas.get(24).addpecabranca();     
         }
-            casas.get(19).addpecabranca();   
-            casas.get(19).addpecabranca();               
-            casas.get(19).addpecabranca();   
+            casas.get(19).addpecabranca();    
 
         //pecas pretas
         for (int i = 0; i < 2; i++) {

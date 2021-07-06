@@ -450,19 +450,19 @@ public class FXMLDocumentController implements Initializable {
         //verificar que dado escolheu
 
         if (posID1 <= posID2) {
-            if (posID1 >= finID && tab1.dado1.uso == false) {
+            if (posID1+1 >= finID && tab1.dado1.uso == false) {
                 tab1.dado1.uso = true;
                 phase = 2;
-            } else if (posID2 >= finID) {
+            } else if (posID2+1 >= finID) {
                 tab1.dado2.uso = true;
                 phase = 2;
             }
         }
         else if (posID1 >= posID2) {
-            if (posID2 >= finID && tab1.dado2.uso == false) {
+            if (posID2+1 >= finID && tab1.dado2.uso == false) {
                 tab1.dado2.uso = true;
                 phase = 2;
-            } else if (posID1 >= finID) {
+            } else if (posID1 +1>= finID) {
                 tab1.dado1.uso = true;
                 phase = 2;
             }
@@ -473,7 +473,7 @@ public class FXMLDocumentController implements Initializable {
         System.out.println("uso dado1\n" + tab1.dado1.uso);
         System.out.println("uso dado2\n" + tab1.dado2.uso);
 
-        condicaovitoria(jog.jogador, jog.id);
+        condicaovitoria(jog);
 
     }
 
@@ -581,8 +581,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     //verifica se todas as peças brancas se encontram no ultimo quadrante do tabuleiro
-    private void condicaovitoria(String jog, int posFinal) {
-        if (posFinal == 15) {
+    private void condicaovitoria(jogador jog) {
+        if (jog.pecas.size() >= 15) {
             ronda.setTextFill(Color.GOLD);
             ronda.setScaleX(5);
             ronda.setScaleY(5);
