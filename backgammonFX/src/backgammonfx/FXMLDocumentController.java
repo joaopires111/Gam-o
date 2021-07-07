@@ -97,10 +97,10 @@ public class FXMLDocumentController implements Initializable {
         labelfim.setLayoutX(600);
         labelfim.setLayoutY(180);
         fimjogo = false;
-        phase = 0;
 
         //--------------------------IMPRIMIR------------------------------------
         phase = 1;
+        System.out.println("Fase de jogo:" + phase);
         pane.getChildren().clear();
         imprime();
         imprimeronda();
@@ -160,7 +160,7 @@ public class FXMLDocumentController implements Initializable {
         //the transition will set to be auto reversed by setting this to true   
         translate.setAutoReverse(true);
         //setting Circle as the node onto which the transition will be applied  
-        translate.setNode(ronda);
+        translate.setNode(ronda);//-------------------------------------------------------------------------------------------------------
         //playing the transition   
         translate.play();
 
@@ -179,16 +179,7 @@ public class FXMLDocumentController implements Initializable {
 
     }
 
-    public void criardados() {
-        Rectangle dado1 = new Rectangle();
-        Rectangle dado2 = new Rectangle();
-        dado1.setLayoutX(200);
-        dado2.setLayoutY(200);
-        pane.getChildren().add(dado1);
-
-    }
 //Imprime os retangulos de ambos os jogadores
-
     public void imprimeretangulosjog(int id, jogador jog) {
 
         Rects.add(id, new Rectangle(50, 180));
@@ -234,6 +225,7 @@ public class FXMLDocumentController implements Initializable {
         Rects = new ArrayList<>();
         Rects.clear();
         pane.getChildren().removeIf(node -> node instanceof Rectangle);
+        pane.getChildren().removeAll(Rects);
         for (int i = 0; i <= 25; i++) {
 
             Rects.add(i, new Rectangle(50, 180));
@@ -255,10 +247,16 @@ public class FXMLDocumentController implements Initializable {
 
             Rects.get(i).setOnMousePressed(event -> pressed(event));
         }
+        //unica alteração entre projeto do cliente e do servidor
+        //jog1 tem de ser primeiro        
         imprimeretangulosjog(jog.id, jog);
         imprimeretangulosjog(adv.id, adv);
         pane.getChildren().addAll(Rects);
-        System.out.println("rectangulos imprimidos" + jog.id + " + " + adv.id);
+        if (tab1.dado1.rect != null) {
+            tab1.dado1.redraw(pane);
+            tab1.dado2.redraw(pane);
+        }
+
     }
 //necessario repetir "for" para garantir que as peças estejam no topo da hierarquia
 
@@ -294,21 +292,23 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void imprimeronda() {
-        ronda = new Label("fase do jogo: " + phase);
-        ronda.setLayoutX(300);
-        ronda.setLayoutY(180);
+        ronda = new Label("Rode os dados");
+        ronda.setLayoutX(250);
+        ronda.setLayoutY(187);
+        ronda.setScaleX(2);
+        ronda.setScaleY(2);
         pane.getChildren().add(ronda);
 
     }
 
     public void imprimebotao() {
         bdados = new Button("Rodar dados");
-        bdados.setLayoutX(400);
-        bdados.setLayoutY(180);
+        bdados.setLayoutX(450);
+        bdados.setLayoutY(187);
         bdados.setOnMouseClicked(event -> animadados());
         cancelar = new Button("Cancelar");
-        cancelar.setLayoutX(100);
-        cancelar.setLayoutY(180);
+        cancelar.setLayoutX(550);
+        cancelar.setLayoutY(187);
         cancelar.setOnMouseClicked(event -> cancelarjog());
         pane.getChildren().add(bdados);
         pane.getChildren().add(cancelar);
@@ -317,14 +317,15 @@ public class FXMLDocumentController implements Initializable {
 
     private void imprimedados() {
 
-        tab1.dado1.rodadado();
-        tab1.dado2.rodadado();
-        phase = 2;
-        ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
+        tab1.dado1.rodadado(pane, 1);
+        tab1.dado2.rodadado(pane, 2);
+        ronda.setText("Selecione casa origem");
         bdados.setText("Passar Jogada");
         bdados.setDisable(false);
-        bdados.setOnMouseClicked(event1 -> passarjogada());
 
+        bdados.setOnMouseClicked(event1 -> passarjogada());
+        phase = 2;
+        System.out.println("Fase de jogo:" + phase);
     }
 
     //--------------------------------------------JOGADAS-----------------------------------------------
@@ -356,7 +357,8 @@ public class FXMLDocumentController implements Initializable {
         iniX = tab1.casas.get(iniID).pecas.get(iniH).posX;
         iniY = tab1.casas.get(iniID).pecas.get(iniH).posY;
         phase = 3;
-        ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
+        System.out.println("Fase de jogo:" + phase);
+        ronda.setText("Selecione casa destino");
 
         //Caso tenha casas no meio fica automaticamente selecionado o centro;
         if ("jog1".equals(jogador)) {
@@ -420,17 +422,14 @@ public class FXMLDocumentController implements Initializable {
 
         if (finID == 0 || finID == 25) {
             //nao é aceite            
-            System.out.println("wowoooooooooooooooooooo");
 
         } else if (finID == 26 || finID == 27) {
             if (finID == jog.id) {
                 clickfimjogo();
-                ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
                 movepeca(finX - iniX, finY - iniY);
             }
         } else {
             clicknormal();
-            ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
             movepeca(finX - iniX, finY - iniY);
         }
 
@@ -460,37 +459,40 @@ public class FXMLDocumentController implements Initializable {
         tab1.casas.get(iniID).rempeca();
         Rects.get(finID).setFill(Color.BLUE);
         //verificar que dado escolheu
-        
+
         //caso a pos de destino seja 27 as peças estao a moverse na direcao contraria entao é necessario verificaçao de dados diferente
-        if ( finID == 27){
-        posID1 = posID1*-1 + 26;
-        posID2 = posID2*-1 + 26;        
+        if (finID == 27) {
+            posID1 = posID1 * -1 + 26;
+            posID2 = posID2 * -1 + 26;
         }
 
-            if (posID1 <= posID2) {
-                if (posID1 + 1 >= finID && tab1.dado1.uso == false) {
-                    tab1.dado1.uso = true;
-                    phase = 2;
-                } else if (posID2 + 1 >= finID) {
-                    tab1.dado2.uso = true;
-                    phase = 2;
-                }
-            } else if (posID1 >= posID2) {
-                if (posID2 + 1 >= finID && tab1.dado2.uso == false) {
-                    tab1.dado2.uso = true;
-                    phase = 2;
-                } else if (posID1 + 1 >= finID) {
-                    tab1.dado1.uso = true;
-                    phase = 2;
-                }
+        if (posID1 <= posID2) {
+            if (posID1 + 1 >= finID && tab1.dado1.uso == false) {
+                tab1.dado1.usadado();
+                phase = 2;
+                System.out.println("Fase de jogo:" + phase);
+
+            } else if (posID2 + 1 >= finID) {
+                tab1.dado2.usadado();
+                phase = 2;
+                System.out.println("Fase de jogo:" + phase);
             }
-        
+        } else if (posID1 >= posID2) {
+            if (posID2 + 1 >= finID && tab1.dado2.uso == false) {
+                tab1.dado2.usadado();
+                phase = 2;
+                System.out.println("Fase de jogo:" + phase);
+            } else if (posID1 + 1 >= finID) {
+                tab1.dado1.usadado();
+                phase = 2;
+                System.out.println("Fase de jogo:" + phase);
+            }
+        }
 
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
+            System.out.println("Fase de jogo:" + phase);
         }
-        System.out.println("uso dado1\n" + tab1.dado1.uso);
-        System.out.println("uso dado2\n" + tab1.dado2.uso);
 
         condicaovitoria(jog);
 
@@ -523,15 +525,18 @@ public class FXMLDocumentController implements Initializable {
         Rects.get(finID).setFill(Color.BLUE);
         //verificar que dado escolheu (a segunda condição é para caso os dois dados sejam iguais)
         if (finID == posID1 && tab1.dado1.uso == false) {
-            tab1.dado1.uso = true;
+            tab1.dado1.usadado();
             phase = 2;
+            System.out.println("Fase de jogo:" + phase);
         } else if (finID == posID2) {
-            tab1.dado2.uso = true;
+            tab1.dado2.usadado();
             phase = 2;
+            System.out.println("Fase de jogo:" + phase);
         }
 
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
+            System.out.println("Fase de jogo:" + phase);
         }
         System.out.println("uso dado1\n" + tab1.dado1.uso);
         System.out.println("uso dado2\n" + tab1.dado2.uso);
@@ -541,7 +546,7 @@ public class FXMLDocumentController implements Initializable {
         if (phase == 3) {
             imprime();
             phase = 2;
-            ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
+            System.out.println("Fase de jogo:" + phase);
         }
     }
     //---------------------------------server-----------------------------------------
@@ -568,7 +573,7 @@ public class FXMLDocumentController implements Initializable {
         }
 
         phase = 5;
-        ronda.setText("a esperar pelo outro utilizador \n ronda:" + phase);
+        System.out.println("Fase de jogo:" + phase);
 
         receberjogada();
     }
@@ -591,19 +596,20 @@ public class FXMLDocumentController implements Initializable {
             jog = servidor.receberJog();
         } catch (IOException | ClassNotFoundException ex) {
             System.out.println(ex);
+
         }
 
         pane.getChildren().clear();
         imprime();
         imprimeronda();
+        ronda.setText("Jogada recebida");
         imprimebotao();
         bdados.setDisable(false);
-        bdados.setText("rodardados");
         bdados.setOnMouseClicked(event -> animadados());
         phase = 1;
-        tab1.dado1.uso = false;
-        tab1.dado2.uso = false;
-        ronda.setText("jogada recebida \n ronda:" + phase + "\njog" + jog.jogador + "\nadv" + adv.jogador);
+        System.out.println("Fase de jogo:" + phase);
+        tab1.dado1.resetdado();
+        tab1.dado2.resetdado();
 
     }
     //---------------------------------server-----------------------------------------
@@ -635,16 +641,18 @@ public class FXMLDocumentController implements Initializable {
             ronda.setRotate(0.1);
             ronda.setText(jog + "GANHOU !!!!");
             animavitoria();
+
             Rects.forEach((f) -> {
                 f.setDisable(true);
                 System.out.print(f.getId());
-
             });
-            try {
-                servidor.CloseServer();
-            } catch (ClassNotFoundException ex) {
-                System.out.println(ex);
-            }
+            bdados.setText("Guardar pontuação");
+            bdados.setOnMouseClicked(event -> guardascore(event));
+            cancelar.setDisable(true);
+
+
+            phase = 6;
+            System.out.println("Fase de jogo:" + phase);
         }
 
     }
@@ -664,7 +672,14 @@ public class FXMLDocumentController implements Initializable {
         translate.setNode(ronda);
         //playing the transition   
         translate.play();
-        System.out.println("ANIMACAO ACABOU");
+    }
+
+    private void guardascore(MouseEvent event) {
+             try {
+                servidor.CloseServer();
+            } catch (ClassNotFoundException ex) {
+                System.out.println(ex);
+            }
     }
 
 }

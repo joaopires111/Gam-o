@@ -253,13 +253,14 @@ public class Scene2Controller implements Initializable {
 
             Rects.get(i).setOnMousePressed(event -> pressed(event));
         }   
-        
-        //jog2 tem de ser primeiro
+        //unica alteração entre projeto do cliente e do servidor
+        //jog1 tem de ser primeiro
         imprimeretangulosjog(adv.id, adv);      
         imprimeretangulosjog(jog.id, jog);  
-
         pane.getChildren().addAll(Rects);
-
+        if(tab1.dado1.rect != null){
+        tab1.dado1.redraw(pane);
+        tab1.dado2.redraw(pane);    }     
     }
 //necessario repetir "for" para garantir que as peças estejam no topo da hierarquia
 
@@ -305,11 +306,11 @@ public class Scene2Controller implements Initializable {
     public void imprimebotao() {
         bdados = new Button("Rodar dados");
         bdados.setLayoutX(400);
-        bdados.setLayoutY(180);
+        bdados.setLayoutY(187);
         bdados.setOnMouseClicked(event -> animadados());
         cancelar = new Button("Cancelar");
-        cancelar.setLayoutX(100);
-        cancelar.setLayoutY(180);
+        cancelar.setLayoutX(500);
+        cancelar.setLayoutY(187);
         cancelar.setOnMouseClicked(event -> cancelarjog());
         pane.getChildren().add(bdados);
         pane.getChildren().add(cancelar);
@@ -318,8 +319,8 @@ public class Scene2Controller implements Initializable {
 
     private void imprimedados() {
 
-        tab1.dado1.rodadado();
-        tab1.dado2.rodadado();
+        tab1.dado1.rodadado(pane, 1);
+        tab1.dado2.rodadado(pane, 2);
         phase = 2;
         ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
         bdados.setText("Passar Jogada");
@@ -427,12 +428,12 @@ public class Scene2Controller implements Initializable {
         } else if (finID == 26 || finID == 27) {
             if (finID == jog.id) {
                 clickfimjogo();
-                ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
+
                 movepeca(finX - iniX, finY - iniY);
             }
         } else {
             clicknormal();
-            ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
+
             movepeca(finX - iniX, finY - iniY);
         }
 
@@ -468,28 +469,26 @@ public class Scene2Controller implements Initializable {
         posID1 = posID1*-1 + 26;
         posID2 = posID2*-1 + 26;        
         }
-        if (posID1 <= posID2) {
-            if (posID1 + 1 >= finID && tab1.dado1.uso == false) {
-                tab1.dado1.uso = true;
-                phase = 2;
-            } else if (posID2 + 1 >= finID) {
-                tab1.dado2.uso = true;
-                phase = 2;
+            if (posID1 <= posID2) {
+                if (posID1 + 1 >= finID && tab1.dado1.uso == false) {
+                    tab1.dado1.usadado();
+                    phase = 2;
+                } else if (posID2 + 1 >= finID) {
+                    tab1.dado2.usadado();
+                    phase = 2;
+                }
+            } else if (posID1 >= posID2) {
+                if (posID2 + 1 >= finID && tab1.dado2.uso == false) {
+                    tab1.dado2.usadado();
+                    phase = 2;
+                } else if (posID1 + 1 >= finID) {
+                    tab1.dado1.usadado();
+                    phase = 2;
+                }
             }
-        } else if (posID1 >= posID2) {
-            if (posID2 + 1 >= finID && tab1.dado2.uso == false) {
-                tab1.dado2.uso = true;
-                phase = 2;
-            } else if (posID1 + 1 >= finID) {
-                tab1.dado1.uso = true;
-                phase = 2;
-            }
-        }
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
         }
-        System.out.println("uso dado1\n" + tab1.dado1.uso);
-        System.out.println("uso dado2\n" + tab1.dado2.uso);
 
         condicaovitoria(jog);
 
@@ -522,25 +521,23 @@ public class Scene2Controller implements Initializable {
         Rects.get(finID).setFill(Color.BLUE);
         //verificar que dado escolheu (a segunda condição é para caso os dois dados sejam iguais)
         if (finID == posID1 && tab1.dado1.uso == false) {
-            tab1.dado1.uso = true;
+                    tab1.dado1.usadado();
             phase = 2;
         } else if (finID == posID2) {
-            tab1.dado2.uso = true;
+                    tab1.dado2.usadado();
             phase = 2;
         }
 
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
         }
-        System.out.println("uso dado1\n" + tab1.dado1.uso);
-        System.out.println("uso dado2\n" + tab1.dado2.uso);
+
     }
 
     private void cancelarjog() {
         if (phase == 3) {
             imprime();
             phase = 2;
-            ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
         }
     }
     //---------------------------------server-----------------------------------------
@@ -600,8 +597,8 @@ public class Scene2Controller implements Initializable {
         bdados.setText("rodardados");
         bdados.setOnMouseClicked(event -> animadados());
         phase = 1;
-        tab1.dado1.uso = false;
-        tab1.dado2.uso = false;
+        tab1.dado1.resetdado();
+        tab1.dado2.resetdado();
         ronda.setText("jogada recebida \n ronda:" + phase +"\njog"+jog.jogador + "\nadv"+ adv.jogador);
 
     }
