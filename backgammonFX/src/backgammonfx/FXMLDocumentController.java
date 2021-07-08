@@ -5,6 +5,7 @@
  */
 package backgammonfx;
 
+import java.awt.Canvas;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -25,6 +27,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
@@ -50,9 +54,12 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     Pane pane;
     @FXML
+    Image black, white;
+    @FXML
+    ImageView myImageView;
     Button cancelar;
-    Label ronda, labelfim;
-    Button bdados;
+    Label ronda;
+    Button bdados, bpecas;
     tabuleiro tab1;
     jogador jog, adv;
     packet p;
@@ -63,10 +70,12 @@ public class FXMLDocumentController implements Initializable {
     TranslateTransition moves;
     int finX, finY, finID, finH;
     int iniX, iniY, iniID, iniH;
+    int posjogX = 655, posjogY = 220, posadvX = 655, posadvY = 0;
     int posID1, posID2;
     int phase;
+
     boolean fimjogo;
-    final String jogador = "jog1", adversario = "jog2";
+    String jogador = "jog1", adversario = "jog2";
 
     @FXML
     @Override
@@ -77,25 +86,41 @@ public class FXMLDocumentController implements Initializable {
         } catch (Exception ex) {
             System.out.println(ex);
         }
-        System.out.println("pausa");
-
-        Button iniciarjogo = new Button("Iniciar jogo");
-        iniciarjogo.setLayoutX(350);
-        iniciarjogo.setLayoutY(200);
-        iniciarjogo.setOnMouseClicked(even -> iniciarjogo());
-        pane.getChildren().add(iniciarjogo);
 
 //-------------------------------inicio do jogo---------------------------------
+        white = new Image(getClass().getResourceAsStream("d.jpg"));
+        black = new Image(getClass().getResourceAsStream("black.jpg"));
+
     }
 
+    public void selecionarpecapreta() {
+        myImageView.setImage(black);
+        jogador = "jog2";
+        adversario = "jog1";
+        posjogX = 655;
+        posjogY = 0;
+        posadvX = 655;
+        posadvY = 220;
+    }
+
+    public void selecionarpecabranca() {
+        myImageView.setImage(white);
+        jogador = "jog1";
+        adversario = "jog2";
+        posjogX = 655;
+        posjogY = 220;
+        posadvX = 655;
+        posadvY = 0;
+    }
+
+    //inicia/reinicia jogo
     public void iniciarjogo() {
 
         tab1 = new tabuleiro();
-        jog = new jogador(26, jogador, 655, 220);
-        adv = new jogador(27, adversario, 655, 0);
-        labelfim = new Label("is" + fimjogo);
-        labelfim.setLayoutX(600);
-        labelfim.setLayoutY(180);
+
+        jog = new jogador(26, jogador, posjogX, posjogY);
+        adv = new jogador(27, adversario, posadvX, posadvY);
+
         fimjogo = false;
 
         //--------------------------IMPRIMIR------------------------------------
@@ -111,7 +136,7 @@ public class FXMLDocumentController implements Initializable {
         if (phase == 2) {
             Rectangle b = (Rectangle) event.getSource();
             iniID = Integer.parseInt(b.getId());
-            if (tab1.casas.get(iniID).jogavel) {
+            if (tab1.casas.get(iniID).jogavel && iniID < 25 && iniID > 0) {
                 click1();
             }
 
@@ -173,9 +198,7 @@ public class FXMLDocumentController implements Initializable {
     private void imprime() {
         imprimeretangulos();
         imprimepecas();
-        labelfim.setText("Fase final:" + fimjogo);
-        pane.getChildren().remove(labelfim);
-        pane.getChildren().add(labelfim);
+        System.out.println("Fase final:" + fimjogo);
 
     }
 
@@ -186,13 +209,16 @@ public class FXMLDocumentController implements Initializable {
         Rects.get(id).setLayoutX(jog.posX);
         Rects.get(id).setLayoutY(jog.posY);
 
-        if ("jog1".equals(jog.jogador)) {
-            Rects.get(id).setFill(Color.BLACK);
+        if (jogador.equals(jog.jogador)) {
+            if (fimjogo) {
+                Rects.get(id).setFill(Color.RED);
+            } else {
+                Rects.get(id).setFill(Color.BLACK);
+            }
             Rects.get(id).setStroke(Color.GOLD);
             Rects.get(id).setStrokeWidth(3);
-        }
-        if ("jog2".equals(jog.jogador)) {
-            Rects.get(id).setFill(Color.RED);
+        } else {
+            Rects.get(id).setFill(Color.BLACK);
             Rects.get(id).setStroke(Color.GOLD);
             Rects.get(id).setStrokeWidth(3);
         }
@@ -249,8 +275,13 @@ public class FXMLDocumentController implements Initializable {
         }
         //unica alteração entre projeto do cliente e do servidor
         //jog1 tem de ser primeiro        
-        imprimeretangulosjog(jog.id, jog);
-        imprimeretangulosjog(adv.id, adv);
+        if (jog.id < adv.id) {
+            imprimeretangulosjog(jog.id, jog);
+            imprimeretangulosjog(adv.id, adv);
+        } else {
+            imprimeretangulosjog(adv.id, adv);
+            imprimeretangulosjog(jog.id, jog);
+        }
         pane.getChildren().addAll(Rects);
         if (tab1.dado1.rect != null) {
             tab1.dado1.redraw(pane);
@@ -640,8 +671,9 @@ public class FXMLDocumentController implements Initializable {
             ronda.setLayoutX(100);
             ronda.setRotate(0.1);
             ronda.setText(jog + "GANHOU !!!!");
+            pane.getChildren().remove(ronda);
+            pane.getChildren().add(ronda);
             animavitoria();
-
             Rects.forEach((f) -> {
                 f.setDisable(true);
                 System.out.print(f.getId());
@@ -649,7 +681,6 @@ public class FXMLDocumentController implements Initializable {
             bdados.setText("Guardar pontuação");
             bdados.setOnMouseClicked(event -> guardascore(event));
             cancelar.setDisable(true);
-
 
             phase = 6;
             System.out.println("Fase de jogo:" + phase);
@@ -675,11 +706,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     private void guardascore(MouseEvent event) {
-             try {
-                servidor.CloseServer();
-            } catch (ClassNotFoundException ex) {
-                System.out.println(ex);
-            }
+        pane.getChildren().clear();
     }
 
 }

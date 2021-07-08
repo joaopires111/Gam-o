@@ -68,7 +68,7 @@ public class Scene2Controller implements Initializable {
     int posID1, posID2;
     int phase;
     boolean fimjogo;
-    final String jogador = "jog2";
+    String jogador, adversario;
 
     @FXML
     @Override
@@ -79,12 +79,6 @@ public class Scene2Controller implements Initializable {
         } catch (Exception ex) {
             System.out.println(ex);
         }
-
-        Button iniciarjogo = new Button("Receber primeira jogada");
-        iniciarjogo.setLayoutX(350);
-        iniciarjogo.setLayoutY(200);
-        iniciarjogo.setOnMouseClicked(even -> iniciarjogo());
-        pane.getChildren().add(iniciarjogo);
 
     }
 
@@ -97,7 +91,7 @@ public class Scene2Controller implements Initializable {
         fimjogo = false;
         phase = 0;
         //---------------------------------Client recebe pecas e jogadores-----------------------------------------     
-            receberjogada();
+        receberjogada();
         //--------------------------IMPRIMIR------------------------------------
         phase = 1;
         pane.getChildren().clear();
@@ -252,15 +246,21 @@ public class Scene2Controller implements Initializable {
             Rects.get(i).setId(String.valueOf(i));
 
             Rects.get(i).setOnMousePressed(event -> pressed(event));
-        }   
-        //unica alteração entre projeto do cliente e do servidor
-        //jog1 tem de ser primeiro
-        imprimeretangulosjog(adv.id, adv);      
-        imprimeretangulosjog(jog.id, jog);  
+        }
+
+        //jogador com o ID inferior tem de ser primeiro
+        if (jog.id < adv.id) {
+            imprimeretangulosjog(jog.id, jog);
+            imprimeretangulosjog(adv.id, adv);
+        } else {
+            imprimeretangulosjog(adv.id, adv);
+            imprimeretangulosjog(jog.id, jog);
+        }
+        if (tab1.dado1.rect != null) {
+            tab1.dado1.redraw(pane);
+            tab1.dado2.redraw(pane);
+        }
         pane.getChildren().addAll(Rects);
-        if(tab1.dado1.rect != null){
-        tab1.dado1.redraw(pane);
-        tab1.dado2.redraw(pane);    }     
     }
 //necessario repetir "for" para garantir que as peças estejam no topo da hierarquia
 
@@ -397,19 +397,19 @@ public class Scene2Controller implements Initializable {
             if (tab1.dado1.uso == false && posID1 >= 25 || posID1 <= 0) {
                 Rects.get(jog.id).setDisable(false);
                 Rects.get(jog.id).setFill(Color.DARKSEAGREEN);
-                                System.out.println("id do jog ativado" + jog.id);
+                System.out.println("id do jog ativado" + jog.id);
             }
             if (tab1.dado2.uso == false && posID2 >= 25 || posID2 <= 0) {
                 Rects.get(jog.id).setDisable(false);
                 Rects.get(jog.id).setFill(Color.DARKSEAGREEN);
-                                System.out.println("id do jog ativado" + jog.id);
+                System.out.println("id do jog ativado" + jog.id);
             }
         }
 
         if (tab1.dado1.uso == false && clicavel(posID1)) {
             Rects.get(posID1).setFill(Color.DARKSEAGREEN);
             Rects.get(posID1).setDisable(false);
-            
+
         }
         if (tab1.dado2.uso == false && clicavel(posID2)) {
             Rects.get(posID2).setFill(Color.DARKSEAGREEN);
@@ -463,29 +463,29 @@ public class Scene2Controller implements Initializable {
         tab1.casas.get(iniID).rempeca();
         Rects.get(finID).setFill(Color.BLUE);
         //verificar que dado escolheu
-        
+
         //caso a pos de destino seja 27 as peças estao a moverse na direcao contraria entao é necessario verificaçao de dados diferente
-        if ( finID == 27){
-        posID1 = posID1*-1 + 26;
-        posID2 = posID2*-1 + 26;        
+        if (finID == 27) {
+            posID1 = posID1 * -1 + 26;
+            posID2 = posID2 * -1 + 26;
         }
-            if (posID1 <= posID2) {
-                if (posID1 + 1 >= finID && tab1.dado1.uso == false) {
-                    tab1.dado1.usadado();
-                    phase = 2;
-                } else if (posID2 + 1 >= finID) {
-                    tab1.dado2.usadado();
-                    phase = 2;
-                }
-            } else if (posID1 >= posID2) {
-                if (posID2 + 1 >= finID && tab1.dado2.uso == false) {
-                    tab1.dado2.usadado();
-                    phase = 2;
-                } else if (posID1 + 1 >= finID) {
-                    tab1.dado1.usadado();
-                    phase = 2;
-                }
+        if (posID1 <= posID2) {
+            if (posID1 + 1 >= finID && tab1.dado1.uso == false) {
+                tab1.dado1.usadado();
+                phase = 2;
+            } else if (posID2 + 1 >= finID) {
+                tab1.dado2.usadado();
+                phase = 2;
             }
+        } else if (posID1 >= posID2) {
+            if (posID2 + 1 >= finID && tab1.dado2.uso == false) {
+                tab1.dado2.usadado();
+                phase = 2;
+            } else if (posID1 + 1 >= finID) {
+                tab1.dado1.usadado();
+                phase = 2;
+            }
+        }
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
         }
@@ -521,10 +521,10 @@ public class Scene2Controller implements Initializable {
         Rects.get(finID).setFill(Color.BLUE);
         //verificar que dado escolheu (a segunda condição é para caso os dois dados sejam iguais)
         if (finID == posID1 && tab1.dado1.uso == false) {
-                    tab1.dado1.usadado();
+            tab1.dado1.usadado();
             phase = 2;
         } else if (finID == posID2) {
-                    tab1.dado2.usadado();
+            tab1.dado2.usadado();
             phase = 2;
         }
 
@@ -561,7 +561,7 @@ public class Scene2Controller implements Initializable {
             cliente.enviarJog(adv);
         } catch (IOException | ClassNotFoundException ex) {
             System.out.println(ex);
-        }          
+        }
 
         phase = 5;
         ronda.setText("a esperar pelo outro utilizador \n ronda:" + phase);
@@ -588,7 +588,8 @@ public class Scene2Controller implements Initializable {
         } catch (IOException | ClassNotFoundException ex) {
             System.out.println(ex);
         }
-        
+        jogador = jog.jogador;
+        adversario = adv.jogador;
         pane.getChildren().clear();
         imprime();
         imprimeronda();
@@ -599,7 +600,7 @@ public class Scene2Controller implements Initializable {
         phase = 1;
         tab1.dado1.resetdado();
         tab1.dado2.resetdado();
-        ronda.setText("jogada recebida \n ronda:" + phase +"\njog"+jog.jogador + "\nadv"+ adv.jogador);
+        ronda.setText("jogada recebida \n ronda:" + phase + "\njog" + jog.jogador + "\nadv" + adv.jogador);
 
     }
     //---------------------------------server-----------------------------------------
