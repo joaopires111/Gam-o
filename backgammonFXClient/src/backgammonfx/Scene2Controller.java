@@ -12,10 +12,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -94,17 +91,18 @@ public class Scene2Controller implements Initializable {
         receberjogada();
         //--------------------------IMPRIMIR------------------------------------
         phase = 1;
+        System.out.println("Fase de jogo:" + phase);
         pane.getChildren().clear();
         imprime();
         imprimeronda();
         imprimebotao();
     }
 
-    private void pressed(MouseEvent event) {
+   private void pressed(MouseEvent event) {
         if (phase == 2) {
             Rectangle b = (Rectangle) event.getSource();
             iniID = Integer.parseInt(b.getId());
-            if (tab1.casas.get(iniID).jogavel) {
+            if (tab1.casas.get(iniID).jogavel && iniID < 25 && iniID > 0) {
                 click1();
             }
 
@@ -153,7 +151,7 @@ public class Scene2Controller implements Initializable {
         //the transition will set to be auto reversed by setting this to true   
         translate.setAutoReverse(true);
         //setting Circle as the node onto which the transition will be applied  
-        translate.setNode(ronda);
+        translate.setNode(ronda);//-------------------------------------------------------------------------------------------------------
         //playing the transition   
         translate.play();
 
@@ -166,34 +164,27 @@ public class Scene2Controller implements Initializable {
     private void imprime() {
         imprimeretangulos();
         imprimepecas();
-        labelfim.setText("Fase final:" + fimjogo);
-        pane.getChildren().remove(labelfim);
-        pane.getChildren().add(labelfim);
+        System.out.println("Fase final:" + fimjogo);
 
     }
 
-    public void criardados() {
-        Rectangle dado1 = new Rectangle();
-        Rectangle dado2 = new Rectangle();
-        dado1.setLayoutX(200);
-        dado2.setLayoutY(200);
-        pane.getChildren().add(dado1);
-
-    }
 //Imprime os retangulos de ambos os jogadores
-
     public void imprimeretangulosjog(int id, jogador jog) {
+
         Rects.add(id, new Rectangle(50, 180));
         Rects.get(id).setLayoutX(jog.posX);
         Rects.get(id).setLayoutY(jog.posY);
 
-        if ("jog1".equals(jog.jogador)) {
-            Rects.get(id).setFill(Color.BLACK);
+        if (jogador.equals(jog.jogador)) {
+            if (fimjogo) {
+                Rects.get(id).setFill(Color.RED);
+            } else {
+                Rects.get(id).setFill(Color.BLACK);
+            }
             Rects.get(id).setStroke(Color.GOLD);
             Rects.get(id).setStrokeWidth(3);
-        }
-        if ("jog2".equals(jog.jogador)) {
-            Rects.get(id).setFill(Color.RED);
+        } else {
+            Rects.get(id).setFill(Color.BLACK);
             Rects.get(id).setStroke(Color.GOLD);
             Rects.get(id).setStrokeWidth(3);
         }
@@ -226,6 +217,7 @@ public class Scene2Controller implements Initializable {
         Rects = new ArrayList<>();
         Rects.clear();
         pane.getChildren().removeIf(node -> node instanceof Rectangle);
+        pane.getChildren().removeAll(Rects);
         for (int i = 0; i <= 25; i++) {
 
             Rects.add(i, new Rectangle(50, 180));
@@ -233,11 +225,11 @@ public class Scene2Controller implements Initializable {
             Rects.get(i).setLayoutY(tab1.casas.get(i).posY);
 
             if ("AQUA".equals(tab1.casas.get(i).cor)) {
-                Rects.get(i).setFill(Color.AQUAMARINE);
+                Rects.get(i).setFill(Color.AQUA);
                 Rects.get(i).setStroke(Color.BLACK);
             }
             if ("CHOCOLATE".equals(tab1.casas.get(i).cor)) {
-                Rects.get(i).setFill(Color.BROWN);
+                Rects.get(i).setFill(Color.CHOCOLATE);
                 Rects.get(i).setStroke(Color.BLACK);
             }
             if ("".equals(tab1.casas.get(i).cor)) {
@@ -247,8 +239,8 @@ public class Scene2Controller implements Initializable {
 
             Rects.get(i).setOnMousePressed(event -> pressed(event));
         }
-
-        //jogador com o ID inferior tem de ser primeiro
+        //unica alteração entre projeto do cliente e do servidor
+        //jog1 tem de ser primeiro        
         if (jog.id < adv.id) {
             imprimeretangulosjog(jog.id, jog);
             imprimeretangulosjog(adv.id, adv);
@@ -256,11 +248,12 @@ public class Scene2Controller implements Initializable {
             imprimeretangulosjog(adv.id, adv);
             imprimeretangulosjog(jog.id, jog);
         }
+        pane.getChildren().addAll(Rects);
         if (tab1.dado1.rect != null) {
             tab1.dado1.redraw(pane);
             tab1.dado2.redraw(pane);
         }
-        pane.getChildren().addAll(Rects);
+
     }
 //necessario repetir "for" para garantir que as peças estejam no topo da hierarquia
 
@@ -296,20 +289,22 @@ public class Scene2Controller implements Initializable {
     }
 
     public void imprimeronda() {
-        ronda = new Label("fase do jogo: " + phase);
-        ronda.setLayoutX(300);
-        ronda.setLayoutY(180);
+        ronda = new Label("Rode os dados");
+        ronda.setLayoutX(250);
+        ronda.setLayoutY(187);
+        ronda.setScaleX(2);
+        ronda.setScaleY(2);
         pane.getChildren().add(ronda);
 
     }
 
     public void imprimebotao() {
         bdados = new Button("Rodar dados");
-        bdados.setLayoutX(400);
+        bdados.setLayoutX(450);
         bdados.setLayoutY(187);
         bdados.setOnMouseClicked(event -> animadados());
         cancelar = new Button("Cancelar");
-        cancelar.setLayoutX(500);
+        cancelar.setLayoutX(550);
         cancelar.setLayoutY(187);
         cancelar.setOnMouseClicked(event -> cancelarjog());
         pane.getChildren().add(bdados);
@@ -321,12 +316,13 @@ public class Scene2Controller implements Initializable {
 
         tab1.dado1.rodadado(pane, 1);
         tab1.dado2.rodadado(pane, 2);
-        phase = 2;
-        ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
+        ronda.setText("Selecione casa origem");
         bdados.setText("Passar Jogada");
         bdados.setDisable(false);
-        bdados.setOnMouseClicked(event1 -> passarjogada());
 
+        bdados.setOnMouseClicked(event1 -> passarjogada());
+        phase = 2;
+        System.out.println("Fase de jogo:" + phase);
     }
 
     //--------------------------------------------JOGADAS-----------------------------------------------
@@ -358,7 +354,8 @@ public class Scene2Controller implements Initializable {
         iniX = tab1.casas.get(iniID).pecas.get(iniH).posX;
         iniY = tab1.casas.get(iniID).pecas.get(iniH).posY;
         phase = 3;
-        ronda.setText("fase do jogo: " + phase + "\nDado1:" + tab1.dado1.face + "\nDado2:" + tab1.dado2.face);
+        System.out.println("Fase de jogo:" + phase);
+        ronda.setText("Selecione casa destino");
 
         //Caso tenha casas no meio fica automaticamente selecionado o centro;
         if ("jog1".equals(jogador)) {
@@ -409,7 +406,6 @@ public class Scene2Controller implements Initializable {
         if (tab1.dado1.uso == false && clicavel(posID1)) {
             Rects.get(posID1).setFill(Color.DARKSEAGREEN);
             Rects.get(posID1).setDisable(false);
-
         }
         if (tab1.dado2.uso == false && clicavel(posID2)) {
             Rects.get(posID2).setFill(Color.DARKSEAGREEN);
@@ -423,17 +419,14 @@ public class Scene2Controller implements Initializable {
 
         if (finID == 0 || finID == 25) {
             //nao é aceite            
-            System.out.println("wowoooooooooooooooooooo");
 
         } else if (finID == 26 || finID == 27) {
             if (finID == jog.id) {
                 clickfimjogo();
-
                 movepeca(finX - iniX, finY - iniY);
             }
         } else {
             clicknormal();
-
             movepeca(finX - iniX, finY - iniY);
         }
 
@@ -469,25 +462,33 @@ public class Scene2Controller implements Initializable {
             posID1 = posID1 * -1 + 26;
             posID2 = posID2 * -1 + 26;
         }
+
         if (posID1 <= posID2) {
             if (posID1 + 1 >= finID && tab1.dado1.uso == false) {
                 tab1.dado1.usadado();
                 phase = 2;
+                System.out.println("Fase de jogo:" + phase);
+
             } else if (posID2 + 1 >= finID) {
                 tab1.dado2.usadado();
                 phase = 2;
+                System.out.println("Fase de jogo:" + phase);
             }
         } else if (posID1 >= posID2) {
             if (posID2 + 1 >= finID && tab1.dado2.uso == false) {
                 tab1.dado2.usadado();
                 phase = 2;
+                System.out.println("Fase de jogo:" + phase);
             } else if (posID1 + 1 >= finID) {
                 tab1.dado1.usadado();
                 phase = 2;
+                System.out.println("Fase de jogo:" + phase);
             }
         }
+
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
+            System.out.println("Fase de jogo:" + phase);
         }
 
         condicaovitoria(jog);
@@ -523,21 +524,26 @@ public class Scene2Controller implements Initializable {
         if (finID == posID1 && tab1.dado1.uso == false) {
             tab1.dado1.usadado();
             phase = 2;
+            System.out.println("Fase de jogo:" + phase);
         } else if (finID == posID2) {
             tab1.dado2.usadado();
             phase = 2;
+            System.out.println("Fase de jogo:" + phase);
         }
 
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
+            System.out.println("Fase de jogo:" + phase);
         }
-
+        System.out.println("uso dado1\n" + tab1.dado1.uso);
+        System.out.println("uso dado2\n" + tab1.dado2.uso);
     }
 
     private void cancelarjog() {
         if (phase == 3) {
             imprime();
             phase = 2;
+            System.out.println("Fase de jogo:" + phase);
         }
     }
     //---------------------------------server-----------------------------------------
@@ -564,7 +570,7 @@ public class Scene2Controller implements Initializable {
         }
 
         phase = 5;
-        ronda.setText("a esperar pelo outro utilizador \n ronda:" + phase);
+        System.out.println("Fase de jogo:" + phase);
 
         receberjogada();
     }
@@ -587,20 +593,21 @@ public class Scene2Controller implements Initializable {
             jog = cliente.receberJog();
         } catch (IOException | ClassNotFoundException ex) {
             System.out.println(ex);
+
         }
         jogador = jog.jogador;
         adversario = adv.jogador;
         pane.getChildren().clear();
         imprime();
         imprimeronda();
+        ronda.setText("Jogada recebida");
         imprimebotao();
         bdados.setDisable(false);
-        bdados.setText("rodardados");
         bdados.setOnMouseClicked(event -> animadados());
         phase = 1;
+        System.out.println("Fase de jogo:" + phase);
         tab1.dado1.resetdado();
         tab1.dado2.resetdado();
-        ronda.setText("jogada recebida \n ronda:" + phase + "\njog" + jog.jogador + "\nadv" + adv.jogador);
 
     }
     //---------------------------------server-----------------------------------------
@@ -631,17 +638,19 @@ public class Scene2Controller implements Initializable {
             ronda.setLayoutX(100);
             ronda.setRotate(0.1);
             ronda.setText(jog + "GANHOU !!!!");
+            pane.getChildren().remove(ronda);
+            pane.getChildren().add(ronda);
             animavitoria();
             Rects.forEach((f) -> {
                 f.setDisable(true);
                 System.out.print(f.getId());
-
             });
-            try {
-                cliente.CloseServer();
-            } catch (ClassNotFoundException ex) {
-                System.out.println(ex);
-            }
+            bdados.setText("Guardar pontuação");
+            bdados.setOnMouseClicked(event -> guardascore(event));
+            cancelar.setDisable(true);
+
+            phase = 6;
+            System.out.println("Fase de jogo:" + phase);
         }
 
     }
@@ -661,7 +670,10 @@ public class Scene2Controller implements Initializable {
         translate.setNode(ronda);
         //playing the transition   
         translate.play();
-        System.out.println("ANIMACAO ACABOU");
+    }
+
+    private void guardascore(MouseEvent event) {
+        pane.getChildren().clear();
     }
 
 }
