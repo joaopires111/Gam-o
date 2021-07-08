@@ -12,8 +12,14 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
+ * <p>
+ * Classe criada automaticamente para dar lauch á aplicação
+ * dá load á scene criada no scenebuilder
+ * </p>
  *
- * @author User
+ * @author Joao_Pires
+ * @version 1.0
+ * @since 22-06-2021
  */
 public class BackgammonFX extends Application {
 

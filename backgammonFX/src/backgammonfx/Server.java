@@ -9,6 +9,15 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
+/**
+ * <p>
+ *  Classe servidor, devine todos os parametros necessários para a construção do servidor
+ * </p>
+ *
+ * @author Joao_Pires
+ * @version 1.0
+ * @since 22-06-2021
+ */
 public class Server {
 
     Socket s;
@@ -20,12 +29,24 @@ public class Server {
     static final int PORT = 3192;
     ArrayList<casa> casas;
 
+    /**
+     *Construtor
+     * dá inicio ao servidor e pede ao cliente um packet para testar a ligação
+     * invoca {@link backgammonfx.Server#StartServer}
+     * invoca {@link backgammonfx.Server#receber}
+     * @throws Exception caso o cliente não responda ou não consiga encontrar a classe
+     */
     public Server() throws Exception {
         StartServer();
         receber();
     }
 
     //-----------------------START SERVIDOR--------------------------
+
+    /**
+     * Inicia servidor
+     * @throws ClassNotFoundException caso não encontre a classe que é pedida
+     */
     public void StartServer() throws ClassNotFoundException {
         try {
 
@@ -42,6 +63,11 @@ public class Server {
     }
 
     //-----------------------CLOSE SERVIDOR--------------------------
+
+    /**
+     * Fecha servidor
+     * @throws ClassNotFoundException caso não encontre a classe que é pedida
+     */
     public void CloseServer() throws ClassNotFoundException {
         try {
             s.close();
@@ -52,6 +78,12 @@ public class Server {
     }
 
     //---------------------------------RECEBER TESTE-----------------------------
+
+    /**
+     * Espera receber peças de teste
+     * @throws IOException caso não conecte com o cliente
+     * @throws ClassNotFoundException caso não encontre a classe recebida
+     */
     public void receber() throws IOException, ClassNotFoundException {
 
         System.out.println("A RECEBER");
@@ -61,6 +93,13 @@ public class Server {
     }
 
     //------------------------ENVIAR CASAS---------------------------------------
+
+    /**
+     *Envia casas para o cliente
+     * @param tab1 tabuleiro que contem as peças
+     * @throws IOException caso não conecte com o cliente
+     * @throws ClassNotFoundException caso não encontre a classe recebida
+     */
     public void enviarPecas(tabuleiro tab1) throws IOException, ClassNotFoundException {
 
         System.out.println("A ENVIAR CASAS");
@@ -70,6 +109,12 @@ public class Server {
     }
     //-------------------------RECEBER CASAS-------------------------------------
 
+    /**
+     * Recebe as casas do cliente
+     * @return retorna as casas
+     * @throws IOException caso não conecte com o cliente
+     * @throws ClassNotFoundException caso não encontre a classe recebida
+     */
     public ArrayList<casa> receberpecas() throws IOException, ClassNotFoundException {
 
         System.out.println("A RECEBER casas");
@@ -79,6 +124,13 @@ public class Server {
     }
 
     //------------------------ENVIAR JOG---------------------------------------
+
+    /**
+     *Envia o jogador para o cliente
+     * @param jog o jogador a enviar
+     * @throws IOException caso não conecte com o cliente
+     * @throws ClassNotFoundException caso não encontre a classe recebida
+     */
     public void enviarJog(jogador jog) throws IOException, ClassNotFoundException {
 
         System.out.println("A ENVIAR:" + jog.jogador);
@@ -88,6 +140,12 @@ public class Server {
     }
     //-------------------------RECEBER JOG-------------------------------------
 
+    /**
+     *Recebe o jogador do cliente
+     * @return o jogador recebido
+     * @throws IOException caso não conecte com o cliente
+     * @throws ClassNotFoundException caso não encontre a classe recebida
+     */
     public jogador receberJog() throws IOException, ClassNotFoundException {
 
         System.out.println("A RECEBER jogador");

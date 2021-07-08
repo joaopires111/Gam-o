@@ -34,16 +34,8 @@ import javafx.util.Duration;
  */
 public class Scene2Controller implements Initializable {
 
-    private Label label;
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
-    //---------------------------------server-----------------------------------------
-    ServerSocket ss;
-    Socket s;
-    ObjectInputStream din;
-    ObjectOutputStream dout;
-    static final int PORT = 3192;
+
+
     //---------------------------------FXML-----------------------------------------
     @FXML
     Pane pane;
@@ -225,11 +217,11 @@ public class Scene2Controller implements Initializable {
             Rects.get(i).setLayoutY(tab1.casas.get(i).posY);
 
             if ("AQUA".equals(tab1.casas.get(i).cor)) {
-                Rects.get(i).setFill(Color.AQUA);
+                Rects.get(i).setFill(Color.AQUAMARINE);
                 Rects.get(i).setStroke(Color.BLACK);
             }
             if ("CHOCOLATE".equals(tab1.casas.get(i).cor)) {
-                Rects.get(i).setFill(Color.CHOCOLATE);
+                Rects.get(i).setFill(Color.BROWN);
                 Rects.get(i).setStroke(Color.BLACK);
             }
             if ("".equals(tab1.casas.get(i).cor)) {

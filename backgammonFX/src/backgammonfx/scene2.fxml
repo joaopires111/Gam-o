@@ -14,12 +14,12 @@
             <Image url="@70030977-black-and-white-backgammon-board-and-pieces-3d-illustration.jpg" />
          </image>
       </ImageView>
-      <Button fx:id="bpecas" layoutX="251.0" layoutY="276.0" mnemonicParsing="false" onAction="#selecionarpecabranca" prefHeight="45.0" prefWidth="84.0" text="Brancas">
+      <Button layoutX="214.0" layoutY="159.0" mnemonicParsing="false" onAction="#selecionarbrancas" prefHeight="45.0" prefWidth="84.0" text="Brancas">
          <font>
             <Font name="Dubai Regular" size="18.0" />
          </font>
       </Button>
-      <ImageView fx:id="myImageView" fitHeight="150.0" fitWidth="200.0" layoutX="86.0" layoutY="223.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="myImageView" fitHeight="150.0" fitWidth="200.0" layoutX="52.0" layoutY="106.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@d.jpg" />
          </image>
@@ -29,12 +29,27 @@
             <Font name="Magneto Bold" size="48.0" />
          </font>
       </Text>
-      <Button fx:id="iniciar" layoutX="461.0" layoutY="245.0" mnemonicParsing="false" onAction="#iniciarjogo" prefHeight="45.0" prefWidth="93.0" text="Iniciar">
+      <Button fx:id="iniciar" layoutX="256.0" layoutY="273.0" mnemonicParsing="false" onAction="#iniciarjogo" prefHeight="88.0" prefWidth="189.0" text="Iniciar">
+         <font>
+            <Font name="Dubai Regular" size="36.0" />
+         </font>
+      </Button>
+      <Button layoutX="214.0" layoutY="106.0" mnemonicParsing="false" onAction="#selecionarpretas" prefHeight="36.0" prefWidth="85.0" text="Pretas">
          <font>
             <Font name="Dubai Regular" size="18.0" />
          </font>
       </Button>
-      <Button fx:id="bpecas1" layoutX="250.0" layoutY="223.0" mnemonicParsing="false" onAction="#selecionarpecapreta" prefHeight="36.0" prefWidth="85.0" text="Pretas">
+      <ImageView fx:id="myImageView2" fitHeight="150.0" fitWidth="200.0" layoutX="351.0" layoutY="106.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@tabuleiroinicio.jpg" />
+         </image>
+      </ImageView>
+      <Button layoutX="562.0" layoutY="106.0" mnemonicParsing="false" onAction="#selecionartabinicio" prefHeight="36.0" prefWidth="85.0" text="Inicio">
+         <font>
+            <Font name="Dubai Regular" size="18.0" />
+         </font>
+      </Button>
+      <Button layoutX="563.0" layoutY="159.0" mnemonicParsing="false" onAction="#selecionartabfim" prefHeight="45.0" prefWidth="84.0" text="Fim">
          <font>
             <Font name="Dubai Regular" size="18.0" />
          </font>

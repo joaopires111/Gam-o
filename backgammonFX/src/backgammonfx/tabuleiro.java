@@ -8,13 +8,23 @@ package backgammonfx;
 import java.util.ArrayList;
 
 /**
+ * <p>
+ * Tabuleiro que contem array de peças a ser enviado para o cliente
+ * </p>
  *
- * @author User
+ * @author Joao_Pires
+ * @version 1.0
+ * @since 22-06-2021
  */
 public class tabuleiro {
 
     ArrayList<casa> casas;
     dado dado1, dado2;
+
+/**
+ * Construtor
+ * Preenche as casas nas posições corretas
+ */
     public tabuleiro() {
         casas = new ArrayList<>();
         dado1 = new dado();
@@ -25,16 +35,16 @@ public class tabuleiro {
                 System.out.println(i);            
             }
             else if (i <= 6) {
-                casas.add(new casa(i, 650 - (i * 50), 0, "AQUA"));
+                casas.add(new casa(i, 650 - (i * 50), 0, "cima"));
                 System.out.println(i);
             } else if (i > 6 && i <= 12) {
-                casas.add(new casa(i, 650 - (i * 50) - 50, 0, "AQUA"));
+                casas.add(new casa(i, 650 - (i * 50) - 50, 0, "cima"));
                 System.out.println(i);
             } else if (i > 12 && i <= 18) {
-                casas.add(new casa(i, (i - 13) * 50, 220, "CHOCOLATE"));
+                casas.add(new casa(i, (i - 13) * 50, 220, "baixo"));
                 System.out.println(i);
             } else if (i > 18 && i < 25) {
-                casas.add(new casa(i, ((i - 13) * 50) + 50, 220, "CHOCOLATE"));
+                casas.add(new casa(i, ((i - 13) * 50) + 50, 220, "baixo"));
                 System.out.println(i);
             } else if (i == 25){
                 casas.add(new casa(i, 300, 220, ""));
@@ -43,10 +53,12 @@ public class tabuleiro {
 
         }
         //variação para teste se condiçoes de vitoria estao corretas
-        iniciapecastesteFinal();
-
     }
 
+    /**
+     * <p>Preenche cada casa do array com a disposição de peças de um jogo normal</p>
+     *Invoca em cada uma das casas dentro do array, o metodo {@link backgammonfx.casa#addpecabranca} e {@link backgammonfx.casa#addpecapreta}
+     */
     public final void iniciapecas() {       
 
         //pecas brancas
@@ -79,6 +91,11 @@ public class tabuleiro {
 
     }
     //impressão de peças para simular o final do jogo
+
+    /**
+     * <p>Preenche cada casa do array com a disposição de peças para testar as a fase final do jogo</p>
+     *Invoca em cada uma das casas dentro do array, o metodo {@link backgammonfx.casa#addpecabranca} e {@link backgammonfx.casa#addpecapreta}
+     */
         public final void iniciapecastesteFinal() {
             
                 for (int i = 0; i < 14; i++) {
@@ -96,7 +113,12 @@ public class tabuleiro {
 
     }
     
-        public boolean fimdejogo(String jogador) {      
+    /**
+     *<p>Testa se todas as peças do jogador encontram-se no ultimo quadrante</p>
+     * @param jogador o jogador ao qual vai ser testado
+     * @return true se todas as peças se encontrarem no ultimo parametro
+     */
+    public boolean fimdejogo(String jogador) {      
         int total = 0;
         //percorre casas 24 a 19 se for o jogador 1
         if ("jog1".equals(jogador)) {

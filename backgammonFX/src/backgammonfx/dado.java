@@ -11,8 +11,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
+ * <p>
+ *A classe dado representa os dados a serem imprimidos para o ecra
+ * </p>
  *
- * @author User
+ * @author Joao_Pires
+ * @version 1.0
+ * @since 22-06-2021
  */
 public class dado {
 
@@ -21,10 +26,20 @@ public class dado {
     Rectangle rect;
     Label num;
 
+    /**
+     *Construtor
+     */
     public dado() {
         resetdado();
     }
 
+    /**
+     *Roda o dado, guarda um valor aleatorio entre 1 e 6
+     * e cria um retangulo com esse valor no meio
+     * no fim adiciona ao pane para ser impresso
+     * @param pane pane onde será adicionado o dado
+     * @param pos posição onde o dado será imprimido
+     */
     public void rodadado(Pane pane, int pos) {
         uso = false;
         face = (int) Math.floor(Math.random() * 6) + 1;
@@ -43,6 +58,10 @@ public class dado {
 
     }
 
+    /**
+     *Retira e adiciona novamente ao pane
+     * @param pane pane onde será retirado e adicionado
+     */
     public void redraw(Pane pane) {
         pane.getChildren().remove(rect);
         pane.getChildren().remove(num);        
@@ -50,11 +69,19 @@ public class dado {
         pane.getChildren().add(num);
     }
 
+    /**
+     * Usa o dado
+     *Torna o boolean uso = true
+     *Troca a cor do dado para cinzento para informar que foi usado
+     */
     public void usadado() {
         uso = true;
         rect.setFill(Color.GREY);
     }
     
+    /**
+     *Reseta os atributos do dado
+     */
     public void resetdado(){
         face = 0;
     rect = null;
