@@ -8,13 +8,19 @@ package backgammonfx;
 import java.io.Serializable;
 
 /**
+ * A classe packet apenas contem uma string message para testar a ligação entre
+ * o servidor e o cliente
  *
- * @author User
  */
 public class packet implements Serializable {
+
     String message;
-    public packet(String message){
-    this.message = message;
+/**
+ *Construtor
+     * @param message mensagem a ser enviada
+ */
+    public packet(String message) {
+        this.message = message;
     }
-    
+
 }

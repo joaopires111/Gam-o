@@ -6,22 +6,17 @@
 package backgammonfx;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -29,8 +24,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 /**
+ * <h1>BackGammonFX (Cliente)</h1>
+ * <p>
+ * O programa BackgammonFX é uma aplicação que permite jogar gamão atraves de
+ * uma conexão servidor cliente.
+ * </p>
  *
- * @author User
+ * @author Joao_Pires
+ * @version 1.0
+ * @since 22-06-2021
  */
 public class Scene2Controller implements Initializable {
 
@@ -58,10 +60,15 @@ public class Scene2Controller implements Initializable {
     int phase;
     boolean fimjogo;
     String jogador, adversario;
-
+    /**
+ * <p>
+ * Inicializa o codigo, equivalente a um main
+ * </p>
+ */
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+                phase = 0;
         //---------------------------------cliente envia msg de teste-----------------------------------------
         try {
             cliente = new Client();
@@ -71,6 +78,22 @@ public class Scene2Controller implements Initializable {
 
     }
 
+    /**
+     * <p>
+     * inicia/reinicia jogo</p>
+     * <p>
+     * Cria tabuleiro</p>
+     * <p>
+     * Dá reset aos atributos para valores iniciais</p>
+     * <p>
+     * Muda phase para 1</p>
+     * <p>
+     * invoca {@link backgammonfx.Scene2Controller#imprime()}</p>
+     * <p>
+     * invoca {@link backgammonfx.Scene2Controller#imprimeronda()}</p>
+     * <p>
+     * invoca {@link backgammonfx.Scene2Controller#imprimebotao()}</p>
+     */
     public void iniciarjogo() {
 
         tab1 = new tabuleiro();
@@ -78,9 +101,12 @@ public class Scene2Controller implements Initializable {
         labelfim.setLayoutX(600);
         labelfim.setLayoutY(180);
         fimjogo = false;
-        phase = 0;
+
         //---------------------------------Client recebe pecas e jogadores-----------------------------------------     
         receberjogada();
+        jogador = jog.jogador;
+        adversario = adv.jogador;
+        System.out.println(jogador + " essss " + adversario);
         //--------------------------IMPRIMIR------------------------------------
         phase = 1;
         System.out.println("Fase de jogo:" + phase);
@@ -90,7 +116,18 @@ public class Scene2Controller implements Initializable {
         imprimebotao();
     }
 
-   private void pressed(MouseEvent event) {
+      /**
+     * <p>
+     * Metodo associado a cada retangulo</p>
+     * <p>
+     * Se phase == 2 invoca
+     * {@link backgammonfx.Scene2Controller#click1()}</p>
+     * <p>
+     * Se phase == 3 invoca
+     * {@link backgammonfx.Scene2Controller#click2()}</p>
+     * @param event evento associado ao click da peça, a partir do metodo event.getsource() é possivel retornar o id da peça 
+     */
+    public void pressed(MouseEvent event) {
         if (phase == 2) {
             Rectangle b = (Rectangle) event.getSource();
             iniID = Integer.parseInt(b.getId());
@@ -108,8 +145,14 @@ public class Scene2Controller implements Initializable {
         }
 
     }
-
-    private void movepeca(int diferencaX, int diferencaY) {
+    
+    /**
+     *Anima a movimentação das peças
+     * @param diferencaX vetor X do movimento da peça
+     * @param diferencaY vetor Y do movimento da peça
+     * Ambos os parametros resultam da diferença entre a posiçao inicial e final da peça
+     */
+    public void movepeca(int diferencaX, int diferencaY) {
         //Instantiating TranslateTransition class   
         TranslateTransition translate = new TranslateTransition();
         //shifting the X coordinate of the centre of the circle by 400   
@@ -130,7 +173,11 @@ public class Scene2Controller implements Initializable {
         System.out.println("ANIMACAO ACABOU");
     }
 
-    private void animadados() {
+    /**
+     *Metodo que anima a label ronda para simular uma mão a abanar os dados
+     * no final invoca {@link backgammonfx.Scene2Controller#imprimedados()}
+     */
+    public void animadados() {
         //Instantiating TranslateTransition class   
         TranslateTransition translate = new TranslateTransition();
         //shifting the X coordinate of the centre of the circle by 400   
@@ -153,14 +200,24 @@ public class Scene2Controller implements Initializable {
     }
 
     //----------------------------IMPRIME----------------------------------------
-    private void imprime() {
+
+    /**
+     * Metodo que imprime retangulos e peças
+     *Invoca {@link backgammonfx.Scene2Controller#imprimedados()}
+     *Invoca {@link backgammonfx.Scene2Controller#imprimedados()}
+     * 
+     */
+    public void imprime() {
         imprimeretangulos();
         imprimepecas();
-        System.out.println("Fase final:" + fimjogo);
-
     }
 
-//Imprime os retangulos de ambos os jogadores
+
+    /**
+     *Imprime os retangulos associados á casa do jogador
+     * @param id id do retangulo associado ao jogador
+     * @param jog jogador ao qual a casa será imprimida
+     */
     public void imprimeretangulosjog(int id, jogador jog) {
 
         Rects.add(id, new Rectangle(50, 180));
@@ -185,6 +242,11 @@ public class Scene2Controller implements Initializable {
         Rects.get(id).setOnMousePressed(event -> pressed(event));
     }
 
+    /**
+     *Imprime os circulos associados ás peças de jogador
+     * @param id id da casa associado ao jogador
+     * @param jog jogador ao qual as peças seram imprimidas
+     */
     public void imprimepecasjog(int id, jogador jog) {
         for (int h = 0; h < jog.pecas.size(); h++) {
 
@@ -205,6 +267,19 @@ public class Scene2Controller implements Initializable {
 
     }
 
+    /**
+     * <p>
+     * Guarda no array Rects[], retangulos com os atributos da classe casa</p>
+     * <p>
+     * No final invoca
+     * {@link backgammonfx.Scene2Controller#imprimeretangulosjog} com os
+     * atributos do jogador</p>
+     * <p>
+     * E invoca
+     * {@link backgammonfx.Scene2Controller#imprimeretangulosjog}
+     * novamente com os atributos do adversario</p>
+     *
+     */
     public void imprimeretangulos() {
         Rects = new ArrayList<>();
         Rects.clear();
@@ -216,11 +291,11 @@ public class Scene2Controller implements Initializable {
             Rects.get(i).setLayoutX(tab1.casas.get(i).posX);
             Rects.get(i).setLayoutY(tab1.casas.get(i).posY);
 
-            if ("AQUA".equals(tab1.casas.get(i).cor)) {
+            if ("cima".equals(tab1.casas.get(i).cor)) {
                 Rects.get(i).setFill(Color.AQUAMARINE);
                 Rects.get(i).setStroke(Color.BLACK);
             }
-            if ("CHOCOLATE".equals(tab1.casas.get(i).cor)) {
+            if ("baixo".equals(tab1.casas.get(i).cor)) {
                 Rects.get(i).setFill(Color.BROWN);
                 Rects.get(i).setStroke(Color.BLACK);
             }
@@ -249,6 +324,19 @@ public class Scene2Controller implements Initializable {
     }
 //necessario repetir "for" para garantir que as peças estejam no topo da hierarquia
 
+    /**
+     * <p>
+     * Guarda no array duplo Circs[][], circulos com os atributos da classe peca</p>
+     * <p>
+     * No final invoca
+     * {@link backgammonfx.Scene2Controller#imprimepecasjog} com os
+     * atributos do jogador</p>
+     * <p>
+     * E invoca
+     * {@link backgammonfx.Scene2Controller#imprimepecasjog}
+     * novamente com os atributos do adversario</p>
+     *
+     */
     @FXML
     public void imprimepecas() {
         Circs = new Circle[30][16];
@@ -280,6 +368,9 @@ public class Scene2Controller implements Initializable {
 
     }
 
+    /**
+     *Cria e imprime o texto que aparece no centro do ecra
+     */
     public void imprimeronda() {
         ronda = new Label("Rode os dados");
         ronda.setLayoutX(250);
@@ -290,6 +381,9 @@ public class Scene2Controller implements Initializable {
 
     }
 
+    /**
+     *Cria e imprime o botão associado a rodar dados e passar jogada
+     */
     public void imprimebotao() {
         bdados = new Button("Rodar dados");
         bdados.setLayoutX(450);
@@ -304,7 +398,12 @@ public class Scene2Controller implements Initializable {
 
     }
 
-    private void imprimedados() {
+    /**
+     *Metodo que cria e imprime dados para o ecra
+     * invoca {@link backgammonfx.dado#rodadado} para dado 1
+     * invoca {@link backgammonfx.dado#rodadado} para dado 2
+     */
+    public void imprimedados() {
 
         tab1.dado1.rodadado(pane, 1);
         tab1.dado2.rodadado(pane, 2);
@@ -318,8 +417,14 @@ public class Scene2Controller implements Initializable {
     }
 
     //--------------------------------------------JOGADAS-----------------------------------------------
-    //verifica se posicao de destino encontra se vazia e caso nao esteja vazia se contem peças do oponente
-    private boolean clicavel(int posID) {
+
+
+    /**
+     *verifica se posicao de destino encontra se vazia e caso nao esteja vazia se contem peças do oponente
+     * @param posID posição que irá ser verificada
+     * @return boolean que representa se é clicavel ou não
+     */
+    public boolean clicavel(int posID) {
         try {
             if (!tab1.casas.get(posID).pecas.isEmpty()) {
                 if (jogador.compareTo(tab1.casas.get(posID).pecas.get(0).jogador) == 0) {
@@ -340,7 +445,12 @@ public class Scene2Controller implements Initializable {
 
     }
 
-    private void click1() {
+    /**
+     *Metodo associado ao primeiro click (selecionar a peça a mover)
+     * preve onde a peça poderá se mover (a partir da soma com o dado 1 e dado 2) e muda a cor das casas
+     * assim como bloqueia as casas para onde não se pode mover
+     */
+    public void click1() {
 
         iniH = tab1.casas.get(iniID).pecas.size() - 1;
         iniX = tab1.casas.get(iniID).pecas.get(iniH).posX;
@@ -406,7 +516,12 @@ public class Scene2Controller implements Initializable {
 
     }
 
-    private void click2() {
+    /**
+     *Metodo associado ao segundo click (seleção de onde a peça irá mover)
+     * caso a posição final seja uma casa de um jogador invoca {@link backgammonfx.Scene2Controller#clickfimjogo()}
+     * caso a posição final seja outra invoca {@link backgammonfx.Scene2Controller#clicknormal()}
+     */
+    public void click2() {
         System.out.print(finID);
 
         if (finID == 0 || finID == 25) {
@@ -422,14 +537,17 @@ public class Scene2Controller implements Initializable {
             movepeca(finX - iniX, finY - iniY);
         }
 
+
         /*  for (Rectangle f : Rects) {
                 f.setDisable(true);
             }*/
     }
 
+    /**
+     *Click associado a peça sair para a casa do jogador
+     * no final invoca {@link backgammonfx.Scene2Controller#condicaovitoria}
+     */
     public void clickfimjogo() {
-        System.out.println("weweweeeeeeeeeeeeeeeeee");
-        System.out.println("weweweeeeeeeeeeeeeeeeee");
         //Adicionar peça para acertar a posição da animação final    
         jog.addpecablank();
         //verificar o  H (id da ultima peça dentro da casa)
@@ -451,17 +569,21 @@ public class Scene2Controller implements Initializable {
 
         //caso a pos de destino seja 27 as peças estao a moverse na direcao contraria entao é necessario verificaçao de dados diferente
         if (finID == 27) {
-            posID1 = posID1 * -1 + 26;
-            posID2 = posID2 * -1 + 26;
+            posID1 = posID1 * -1 + 27;
+            posID2 = posID2 * -1 + 27;
         }
-
+        if (finID == 26) {
+        posID1 += 1;
+        posID2 += 1;
+        }
+//função para usar o menor dos dois dados
         if (posID1 <= posID2) {
-            if (posID1 + 1 >= finID && tab1.dado1.uso == false) {
+            if (posID1 >= finID && tab1.dado1.uso == false) {
                 tab1.dado1.usadado();
                 phase = 2;
                 System.out.println("Fase de jogo:" + phase);
 
-            } else if (posID2 + 1 >= finID) {
+            } else if (posID2 >= finID) {
                 tab1.dado2.usadado();
                 phase = 2;
                 System.out.println("Fase de jogo:" + phase);
@@ -471,7 +593,7 @@ public class Scene2Controller implements Initializable {
                 tab1.dado2.usadado();
                 phase = 2;
                 System.out.println("Fase de jogo:" + phase);
-            } else if (posID1 + 1 >= finID) {
+            } else if (posID1 >= finID) {
                 tab1.dado1.usadado();
                 phase = 2;
                 System.out.println("Fase de jogo:" + phase);
@@ -481,12 +603,18 @@ public class Scene2Controller implements Initializable {
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
             System.out.println("Fase de jogo:" + phase);
+            ronda.setText("Passe jogada");
+        } else {
+            ronda.setText("Selecione casa origem");
         }
 
         condicaovitoria(jog);
 
     }
 
+    /**
+     *Click associado a peça a mover para casa
+     */
     public void clicknormal() {
         //Adicionar peça para acertar a posição da animação final    
         tab1.casas.get(finID).addpecablank();
@@ -526,12 +654,18 @@ public class Scene2Controller implements Initializable {
         if (tab1.dado1.uso && tab1.dado2.uso) {
             phase = 4;
             System.out.println("Fase de jogo:" + phase);
+            ronda.setText("Passe jogada");
+        } else {
+            ronda.setText("Selecione casa origem");
         }
-        System.out.println("uso dado1\n" + tab1.dado1.uso);
-        System.out.println("uso dado2\n" + tab1.dado2.uso);
     }
 
-    private void cancelarjog() {
+    /**
+     *Metodo invocado a partir de botão cancelar
+     * cancela a posição escolhida com o click1
+     * e retorna phase para 2
+     */
+    public void cancelarjog() {
         if (phase == 3) {
             imprime();
             phase = 2;
@@ -540,7 +674,11 @@ public class Scene2Controller implements Initializable {
     }
     //---------------------------------server-----------------------------------------
 
-    private void passarjogada() {
+    /**
+     *Metodo que passa a jogada para o outro jogador
+     * envia o tabuleiro e os jogadores ao cliente
+     */
+    public void passarjogada() {
         bdados.setDisable(true);
         //envia pecas
         try {
@@ -566,8 +704,14 @@ public class Scene2Controller implements Initializable {
 
         receberjogada();
     }
-
-    private void receberjogada() {
+    
+    /**
+     *Recebe a jogada do jogador adversario
+     * invoca {@link backgammonfx.Client#receberpecas}
+     * invoca {@link backgammonfx.Client#receberJog()} para jogador 1
+     * invoca {@link backgammonfx.Client#receberJog()} para jogador 2
+     */
+    public void receberjogada() {
         //recebe pecas
         try {
             tab1.casas = cliente.receberpecas();
@@ -587,6 +731,7 @@ public class Scene2Controller implements Initializable {
             System.out.println(ex);
 
         }
+        //unica alteração do cliente para o servidor
         jogador = jog.jogador;
         adversario = adv.jogador;
         pane.getChildren().clear();
@@ -604,7 +749,12 @@ public class Scene2Controller implements Initializable {
     }
     //---------------------------------server-----------------------------------------
 
-    private void comivel() {
+    /**
+     *Verifica se um espaço contem uma peça adversaria e caso tenha invoca {@link backgammonfx.casa#addpecabranca()} ou {@link backgammonfx.casa#addpecapreta()}
+     * para inserir a peça no centro
+     * e em seguida invoca {@link backgammonfx.casa#rempeca()} para remover a peça
+     */
+    public void comivel() {
         //Só há uma situação em que a peça pousa numa peça adversária (clicavel) que é quando esta é comivel
         if (!tab1.casas.get(finID).pecas.isEmpty()) {
             if (tab1.casas.get(finID).pecas.get(finH - 1).jogador.compareTo(jogador) != 0) {
@@ -621,15 +771,19 @@ public class Scene2Controller implements Initializable {
         }
     }
 
-    //verifica se todas as peças brancas se encontram no ultimo quadrante do tabuleiro
-    private void condicaovitoria(jogador jog) {
+    /**
+     *verifica se todas as peças brancas se encontram na casa do jogador
+     * @param jog jogador ao qual irá ser verificado
+     */
+    public void condicaovitoria(jogador jog) {
         if (jog.pecas.size() >= 15) {
             ronda.setTextFill(Color.GOLD);
             ronda.setScaleX(5);
             ronda.setScaleY(5);
             ronda.setLayoutX(100);
-            ronda.setRotate(0.1);
-            ronda.setText(jog + "GANHOU !!!!");
+            ronda.setLayoutY(20);            
+            ronda.setRotate(0.2);
+            ronda.setText(jog.jogador + "GANHOU !!!!");
             pane.getChildren().remove(ronda);
             pane.getChildren().add(ronda);
             animavitoria();
@@ -643,11 +797,16 @@ public class Scene2Controller implements Initializable {
 
             phase = 6;
             System.out.println("Fase de jogo:" + phase);
+                        pane.getChildren().remove(ronda);
+            pane.getChildren().add(ronda);
         }
 
     }
 
-    private void animavitoria() {
+    /**
+     *Animação do texto no centro do ecra para vitoria do jogador
+     */
+    public void animavitoria() {
         //Instantiating TranslateTransition class   
         TranslateTransition translate = new TranslateTransition();
         //shifting the X coordinate of the centre of the circle by 400   
@@ -664,8 +823,16 @@ public class Scene2Controller implements Initializable {
         translate.play();
     }
 
-    private void guardascore(MouseEvent event) {
+    /**
+     * @param event evento associado ao click do mouse, não é utilizado
+     */
+    public void guardascore(MouseEvent event) {
         pane.getChildren().clear();
+        try {
+            cliente.CloseServer();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Scene2Controller.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

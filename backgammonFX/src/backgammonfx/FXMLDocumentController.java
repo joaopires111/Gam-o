@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -73,17 +75,20 @@ public class FXMLDocumentController implements Initializable {
     int phase;
     //representa se é possivel começar a retirar peças do jogo
     boolean fimjogo;
-    //"id" do jogador e do adversário
+    //"nome" do jogador e do adversário
     String jogador = "jog1", adversario = "jog2";
-    
+    //id da casa do jogador e do adversario
+    int jogid = 26, advid = 27;
+
     /**
- * <p>
- * Inicializa o codigo, equivalente a um main
- * </p>
- */
+     * <p>
+     * Inicializa o codigo, equivalente a um main
+     * </p>
+     */
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        phase = 0;
         //---------------------------------Server start recebe msg de teste-----------------------------------------
         try {
             servidor = new Server();
@@ -96,12 +101,12 @@ public class FXMLDocumentController implements Initializable {
         black = new Image(getClass().getResourceAsStream("black.jpg"));
         tabinicio = new Image(getClass().getResourceAsStream("tabuleiroinicio.jpg"));
         tabfim = new Image(getClass().getResourceAsStream("tabuleirofinal.jpg"));
-
+        tab1 = new tabuleiro();
+        tab1.iniciapecas();
     }
 
     /**
-     * Muda a imagem do imageview
-     * Muda o jogador para pecas pretas (topo)
+     * Muda a imagem do imageview Muda o jogador para pecas pretas (topo)
      */
     public void selecionarpretas() {
         myImageView.setImage(black);
@@ -111,11 +116,12 @@ public class FXMLDocumentController implements Initializable {
         posjogY = 0;
         posadvX = 655;
         posadvY = 220;
+        jogid = 27;
+        advid = 26;
     }
 
     /**
-     * muda a imagem do imageview
-     * Muda jogador para peças brancas (baixo)
+     * muda a imagem do imageview Muda jogador para peças brancas (baixo)
      */
     public void selecionarbrancas() {
         myImageView.setImage(white);
@@ -125,6 +131,8 @@ public class FXMLDocumentController implements Initializable {
         posjogY = 220;
         posadvX = 655;
         posadvY = 0;
+        jogid = 26;
+        advid = 27;
     }
 
     /**
@@ -174,8 +182,8 @@ public class FXMLDocumentController implements Initializable {
      */
     public void iniciarjogo() {
 
-        jog = new jogador(26, jogador, posjogX, posjogY);
-        adv = new jogador(27, adversario, posadvX, posadvY);
+        jog = new jogador(jogid, jogador, posjogX, posjogY);
+        adv = new jogador(advid, adversario, posadvX, posadvY);
 
         fimjogo = false;
 
@@ -197,7 +205,9 @@ public class FXMLDocumentController implements Initializable {
      * <p>
      * Se phase == 3 invoca
      * {@link backgammonfx.FXMLDocumentController#click2()}</p>
-     * @param event evento associado ao click da peça, a partir do metodo event.getsource() é possivel retornar o id da peça 
+     *
+     * @param event evento associado ao click da peça, a partir do metodo
+     * event.getsource() é possivel retornar o id da peça
      */
     public void pressed(MouseEvent event) {
         if (phase == 2) {
@@ -217,12 +227,13 @@ public class FXMLDocumentController implements Initializable {
         }
 
     }
-    
+
     /**
-     *Anima a movimentação das peças
+     * Anima a movimentação das peças
+     *
      * @param diferencaX vetor X do movimento da peça
-     * @param diferencaY vetor Y do movimento da peça
-     * Ambos os parametros resultam da diferença entre a posiçao inicial e final da peça
+     * @param diferencaY vetor Y do movimento da peça Ambos os parametros
+     * resultam da diferença entre a posiçao inicial e final da peça
      */
     public void movepeca(int diferencaX, int diferencaY) {
         //Instantiating TranslateTransition class   
@@ -246,8 +257,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     /**
-     *Metodo que anima a label ronda para simular uma mão a abanar os dados
-     * no final invoca {@link backgammonfx.FXMLDocumentController#imprimedados()}
+     * Metodo que anima a label ronda para simular uma mão a abanar os dados no
+     * final invoca {@link backgammonfx.FXMLDocumentController#imprimedados()}
      */
     public void animadados() {
         //Instantiating TranslateTransition class   
@@ -272,21 +283,20 @@ public class FXMLDocumentController implements Initializable {
     }
 
     //----------------------------IMPRIME----------------------------------------
-
     /**
-     * Metodo que imprime retangulos e peças
-     *Invoca {@link backgammonfx.FXMLDocumentController#imprimedados()}
-     *Invoca {@link backgammonfx.FXMLDocumentController#imprimedados()}
-     * 
+     * Metodo que imprime retangulos e peças Invoca
+     * {@link backgammonfx.FXMLDocumentController#imprimedados()} Invoca
+     * {@link backgammonfx.FXMLDocumentController#imprimedados()}
+     *
      */
     public void imprime() {
         imprimeretangulos();
         imprimepecas();
     }
 
-
     /**
-     *Imprime os retangulos associados á casa do jogador
+     * Imprime os retangulos associados á casa do jogador
+     *
      * @param id id do retangulo associado ao jogador
      * @param jog jogador ao qual a casa será imprimida
      */
@@ -315,7 +325,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     /**
-     *Imprime os circulos associados ás peças de jogador
+     * Imprime os circulos associados ás peças de jogador
+     *
      * @param id id da casa associado ao jogador
      * @param jog jogador ao qual as peças seram imprimidas
      */
@@ -347,8 +358,7 @@ public class FXMLDocumentController implements Initializable {
      * {@link backgammonfx.FXMLDocumentController#imprimeretangulosjog} com os
      * atributos do jogador</p>
      * <p>
-     * E invoca
-     * {@link backgammonfx.FXMLDocumentController#imprimeretangulosjog}
+     * E invoca {@link backgammonfx.FXMLDocumentController#imprimeretangulosjog}
      * novamente com os atributos do adversario</p>
      *
      */
@@ -398,14 +408,14 @@ public class FXMLDocumentController implements Initializable {
 
     /**
      * <p>
-     * Guarda no array duplo Circs[][], circulos com os atributos da classe peca</p>
+     * Guarda no array duplo Circs[][], circulos com os atributos da classe
+     * peca</p>
      * <p>
      * No final invoca
      * {@link backgammonfx.FXMLDocumentController#imprimepecasjog} com os
      * atributos do jogador</p>
      * <p>
-     * E invoca
-     * {@link backgammonfx.FXMLDocumentController#imprimepecasjog}
+     * E invoca {@link backgammonfx.FXMLDocumentController#imprimepecasjog}
      * novamente com os atributos do adversario</p>
      *
      */
@@ -441,7 +451,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     /**
-     *Cria e imprime o texto que aparece no centro do ecra
+     * Cria e imprime o texto que aparece no centro do ecra
      */
     public void imprimeronda() {
         ronda = new Label("Rode os dados");
@@ -454,7 +464,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     /**
-     *Cria e imprime o botão associado a rodar dados e passar jogada
+     * Cria e imprime o botão associado a rodar dados e passar jogada
      */
     public void imprimebotao() {
         bdados = new Button("Rodar dados");
@@ -471,9 +481,9 @@ public class FXMLDocumentController implements Initializable {
     }
 
     /**
-     *Metodo que cria e imprime dados para o ecra
-     * invoca {@link backgammonfx.dado#rodadado} para dado 1
-     * invoca {@link backgammonfx.dado#rodadado} para dado 2
+     * Metodo que cria e imprime dados para o ecra invoca
+     * {@link backgammonfx.dado#rodadado} para dado 1 invoca
+     * {@link backgammonfx.dado#rodadado} para dado 2
      */
     public void imprimedados() {
 
@@ -489,10 +499,10 @@ public class FXMLDocumentController implements Initializable {
     }
 
     //--------------------------------------------JOGADAS-----------------------------------------------
-
-
     /**
-     *verifica se posicao de destino encontra se vazia e caso nao esteja vazia se contem peças do oponente
+     * verifica se posicao de destino encontra se vazia e caso nao esteja vazia
+     * se contem peças do oponente
+     *
      * @param posID posição que irá ser verificada
      * @return boolean que representa se é clicavel ou não
      */
@@ -518,9 +528,9 @@ public class FXMLDocumentController implements Initializable {
     }
 
     /**
-     *Metodo associado ao primeiro click (selecionar a peça a mover)
-     * preve onde a peça poderá se mover (a partir da soma com o dado 1 e dado 2) e muda a cor das casas
-     * assim como bloqueia as casas para onde não se pode mover
+     * Metodo associado ao primeiro click (selecionar a peça a mover) preve onde
+     * a peça poderá se mover (a partir da soma com o dado 1 e dado 2) e muda a
+     * cor das casas assim como bloqueia as casas para onde não se pode mover
      */
     public void click1() {
 
@@ -589,9 +599,11 @@ public class FXMLDocumentController implements Initializable {
     }
 
     /**
-     *Metodo associado ao segundo click (seleção de onde a peça irá mover)
-     * caso a posição final seja uma casa de um jogador invoca {@link backgammonfx.FXMLDocumentController#clickfimjogo()}
-     * caso a posição final seja outra invoca {@link backgammonfx.FXMLDocumentController#clicknormal()}
+     * Metodo associado ao segundo click (seleção de onde a peça irá mover) caso
+     * a posição final seja uma casa de um jogador invoca
+     * {@link backgammonfx.FXMLDocumentController#clickfimjogo()} caso a posição
+     * final seja outra invoca
+     * {@link backgammonfx.FXMLDocumentController#clicknormal()}
      */
     public void click2() {
         System.out.print(finID);
@@ -616,8 +628,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     /**
-     *Click associado a peça sair para a casa do jogador
-     * no final invoca {@link backgammonfx.FXMLDocumentController#condicaovitoria}
+     * Click associado a peça sair para a casa do jogador no final invoca
+     * {@link backgammonfx.FXMLDocumentController#condicaovitoria}
      */
     public void clickfimjogo() {
         //Adicionar peça para acertar a posição da animação final    
@@ -641,27 +653,31 @@ public class FXMLDocumentController implements Initializable {
 
         //caso a pos de destino seja 27 as peças estao a moverse na direcao contraria entao é necessario verificaçao de dados diferente
         if (finID == 27) {
-            posID1 = posID1 * -1 + 26;
-            posID2 = posID2 * -1 + 26;
+            posID1 = posID1 * -1 + 27;
+            posID2 = posID2 * -1 + 27;
         }
-
+        if (finID == 26) {
+            posID1 += 1;
+            posID2 += 1;
+        }
+//função para usar o menor dos dois dados
         if (posID1 <= posID2) {
-            if (posID1 + 1 >= finID && tab1.dado1.uso == false) {
+            if (posID1 >= finID && tab1.dado1.uso == false) {
                 tab1.dado1.usadado();
                 phase = 2;
                 System.out.println("Fase de jogo:" + phase);
 
-            } else if (posID2 + 1 >= finID) {
+            } else if (posID2 >= finID) {
                 tab1.dado2.usadado();
                 phase = 2;
                 System.out.println("Fase de jogo:" + phase);
             }
         } else if (posID1 >= posID2) {
-            if (posID2 + 1 >= finID && tab1.dado2.uso == false) {
+            if (posID2 >= finID && tab1.dado2.uso == false) {
                 tab1.dado2.usadado();
                 phase = 2;
                 System.out.println("Fase de jogo:" + phase);
-            } else if (posID1 + 1 >= finID) {
+            } else if (posID1 >= finID) {
                 tab1.dado1.usadado();
                 phase = 2;
                 System.out.println("Fase de jogo:" + phase);
@@ -681,7 +697,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     /**
-     *Click associado a peça a mover para casa
+     * Click associado a peça a mover para casa
      */
     public void clicknormal() {
         //Adicionar peça para acertar a posição da animação final    
@@ -729,9 +745,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     /**
-     *Metodo invocado a partir de botão cancelar
-     * cancela a posição escolhida com o click1
-     * e retorna phase para 2
+     * Metodo invocado a partir de botão cancelar cancela a posição escolhida
+     * com o click1 e retorna phase para 2
      */
     public void cancelarjog() {
         if (phase == 3) {
@@ -743,8 +758,8 @@ public class FXMLDocumentController implements Initializable {
     //---------------------------------server-----------------------------------------
 
     /**
-     *Metodo que passa a jogada para o outro jogador
-     * envia o tabuleiro e os jogadores ao cliente
+     * Metodo que passa a jogada para o outro jogador envia o tabuleiro e os
+     * jogadores ao cliente
      */
     public void passarjogada() {
         bdados.setDisable(true);
@@ -772,12 +787,12 @@ public class FXMLDocumentController implements Initializable {
 
         receberjogada();
     }
-    
+
     /**
-     *Recebe a jogada do jogador adversario
-     * invoca {@link backgammonfx.Server#receberpecas}
-     * invoca {@link backgammonfx.Server#receberJog()} para jogador 1
-     * invoca {@link backgammonfx.Server#receberJog()} para jogador 2
+     * Recebe a jogada do jogador adversario invoca
+     * {@link backgammonfx.Server#receberpecas} invoca
+     * {@link backgammonfx.Server#receberJog()} para jogador 1 invoca
+     * {@link backgammonfx.Server#receberJog()} para jogador 2
      */
     public void receberjogada() {
         //recebe pecas
@@ -816,9 +831,10 @@ public class FXMLDocumentController implements Initializable {
     //---------------------------------server-----------------------------------------
 
     /**
-     *Verifica se um espaço contem uma peça adversaria e caso tenha invoca {@link backgammonfx.casa#addpecabranca()} ou {@link backgammonfx.casa#addpecapreta()}
-     * para inserir a peça no centro
-     * e em seguida invoca {@link backgammonfx.casa#rempeca()} para remover a peça
+     * Verifica se um espaço contem uma peça adversaria e caso tenha invoca
+     * {@link backgammonfx.casa#addpecabranca()} ou
+     * {@link backgammonfx.casa#addpecapreta()} para inserir a peça no centro e
+     * em seguida invoca {@link backgammonfx.casa#rempeca()} para remover a peça
      */
     public void comivel() {
         //Só há uma situação em que a peça pousa numa peça adversária (clicavel) que é quando esta é comivel
@@ -838,7 +854,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     /**
-     *verifica se todas as peças brancas se encontram na casa do jogador
+     * verifica se todas as peças brancas se encontram na casa do jogador
+     *
      * @param jog jogador ao qual irá ser verificado
      */
     public void condicaovitoria(jogador jog) {
@@ -847,10 +864,10 @@ public class FXMLDocumentController implements Initializable {
             ronda.setScaleX(5);
             ronda.setScaleY(5);
             ronda.setLayoutX(100);
-            ronda.setRotate(0.1);
-            ronda.setText(jog + "GANHOU !!!!");
-            pane.getChildren().remove(ronda);
-            pane.getChildren().add(ronda);
+            ronda.setLayoutY(20);
+            ronda.setRotate(0.2);
+            ronda.setText(jog.jogador + "GANHOU !!!!");
+
             animavitoria();
             Rects.forEach((f) -> {
                 f.setDisable(true);
@@ -862,12 +879,14 @@ public class FXMLDocumentController implements Initializable {
 
             phase = 6;
             System.out.println("Fase de jogo:" + phase);
+            pane.getChildren().remove(ronda);
+            pane.getChildren().add(ronda);
         }
 
     }
 
     /**
-     *Animação do texto no centro do ecra para vitoria do jogador
+     * Animação do texto no centro do ecra para vitoria do jogador
      */
     public void animavitoria() {
         //Instantiating TranslateTransition class   
@@ -891,6 +910,11 @@ public class FXMLDocumentController implements Initializable {
      */
     public void guardascore(MouseEvent event) {
         pane.getChildren().clear();
+        try {
+            servidor.CloseServer();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

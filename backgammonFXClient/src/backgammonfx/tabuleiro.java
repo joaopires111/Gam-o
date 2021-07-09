@@ -8,21 +8,35 @@ package backgammonfx;
 import java.util.ArrayList;
 
 /**
+ * <p>
+ * Tabuleiro que contem array de casas a ser enviado para o servidor
+ * </p>
  *
- * @author User
+ * @author Joao_Pires
+ * @version 1.0
+ * @since 22-06-2021
  */
 public class tabuleiro {
 
     ArrayList<casa> casas;
-    dado dado1;
-    dado dado2;
+    dado dado1, dado2;
 
+/**
+ * Construtor
+ * inicia casas dado1 e dado2
+ */
     public tabuleiro() {
         casas = new ArrayList<>();
         dado1 = new dado();
         dado2 = new dado();
     }
-        public boolean fimdejogo(String jogador) {      
+    
+    /**
+     *<p>Testa se todas as peças do jogador encontram-se no ultimo quadrante</p>
+     * @param jogador o jogador ao qual vai ser testado
+     * @return true se todas as peças se encontrarem no ultimo parametro
+     */
+    public boolean fimdejogo(String jogador) {      
         int total = 0;
         //percorre casas 24 a 19 se for o jogador 1
         if ("jog1".equals(jogador)) {
@@ -53,5 +67,7 @@ public class tabuleiro {
         
         return total >= 15;
     }
+
+
 
 }

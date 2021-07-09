@@ -80,7 +80,7 @@ public class Server {
     //---------------------------------RECEBER TESTE-----------------------------
 
     /**
-     * Espera receber peças de teste
+     * Espera receber packet de teste
      * @throws IOException caso não conecte com o cliente
      * @throws ClassNotFoundException caso não encontre a classe recebida
      */
